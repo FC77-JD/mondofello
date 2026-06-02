@@ -38,7 +38,8 @@ main{max-width:980px;margin:0 auto;padding:28px 20px 80px;}
 .girone-header{background:var(--surface2);padding:9px 13px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;justify-content:space-between;}
 .girone-status{font-size:10px;color:var(--muted);font-weight:400;letter-spacing:0;}
 .rank-list{padding:6px;list-style:none;}
-.rank-item{display:flex;align-items:center;gap:7px;padding:5px 6px;border-radius:6px;cursor:grab;transition:background .15s;user-select:none;border:1px solid transparent;}
+/* FIX 1: touch-friendly rank items - no user-select issue */
+.rank-item{display:flex;align-items:center;gap:7px;padding:5px 6px;border-radius:6px;transition:background .15s;border:1px solid transparent;touch-action:none;}
 .rank-item:hover{background:var(--surface2);}
 .rank-item.dragging{opacity:.45;border-color:var(--accent);background:var(--surface2);}
 .rank-item.dragover{border-color:var(--accent);background:rgba(245,197,24,.07);}
@@ -48,27 +49,33 @@ main{max-width:980px;margin:0 auto;padding:28px 20px 80px;}
 .rank-num.r3{background:rgba(232,69,69,.15);color:#e84545;border:1px solid rgba(232,69,69,.3);}
 .rank-num.r4{background:transparent;color:var(--muted);}
 .rank-name{font-size:13px;font-weight:500;flex:1;}
-.drag-handle{color:var(--border);font-size:13px;}
-.thirds-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:20px;}
-.third-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 13px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:border-color .15s;}
+/* FIX 1: drag handle zona touch ampia */
+.drag-handle{color:var(--muted);font-size:18px;padding:4px 6px;cursor:grab;touch-action:none;flex-shrink:0;}
+/* FIX 7: thirds card - layout colonna fisso, testo terza più grande */
+.thirds-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:20px;}
+.third-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 13px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:border-color .15s;}
 .third-card:hover{border-color:var(--muted);}
 .third-card.selected{border-color:var(--green);background:rgba(34,197,94,.06);}
-.group-lbl{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;color:var(--accent);letter-spacing:1px;flex-shrink:0;}
+.group-lbl{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;color:var(--accent);letter-spacing:1px;flex-shrink:0;margin-top:2px;}
 .third-info{flex:1;min-width:0;}
-.team-name{font-size:13px;font-weight:500;}
-.third-context{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.3;}
-.third-context .ctx-teams{display:flex;gap:4px;flex-wrap:wrap;margin-top:2px;}
-.ctx-badge{font-size:10px;padding:1px 5px;border-radius:3px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);}
+.team-name{font-size:16px;font-weight:700;line-height:1.2;margin-bottom:5px;}
+.third-context{font-size:11px;color:var(--muted);line-height:1.3;}
+/* FIX 7: badges sempre in colonna */
+.ctx-teams{display:flex;flex-direction:column;gap:3px;margin-top:3px;}
+.ctx-badge{font-size:10px;padding:2px 6px;border-radius:3px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);display:block;}
 .ctx-badge.q{border-color:rgba(245,197,24,.3);color:var(--accent);}
-.check-icon{width:18px;height:18px;border-radius:4px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;transition:all .15s;}
+.check-icon{width:20px;height:20px;border-radius:5px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;transition:all .15s;margin-top:2px;}
 .third-card.selected .check-icon{background:var(--green);border-color:var(--green);color:#000;}
-.btn-send{background:linear-gradient(135deg,#22c55e,#16a34a);color:#000;font-weight:700;}
-.btn-send:hover{background:linear-gradient(135deg,#4ade80,#22c55e);transform:translateY(-1px);}
+/* FIX 5: tasto INVIA grande e prominente */
+.btn-send{background:linear-gradient(135deg,#22c55e,#16a34a);color:#000;font-weight:700;font-size:18px !important;padding:18px 36px !important;border-radius:12px !important;letter-spacing:1px;box-shadow:0 4px 20px rgba(34,197,94,.35);}
+.btn-send:hover{background:linear-gradient(135deg,#4ade80,#22c55e);transform:translateY(-2px);box-shadow:0 6px 28px rgba(34,197,94,.5);}
+.btn-send:disabled{opacity:.6;transform:none;box-shadow:none;}
 .btn-share{background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;font-weight:700;}
 .btn-share:hover{background:linear-gradient(135deg,#60a5fa,#3b82f6);transform:translateY(-1px);}
-.send-box{background:linear-gradient(135deg,rgba(34,197,94,.08),rgba(34,197,94,.02));border:1px solid rgba(34,197,94,.3);border-radius:var(--radius);padding:20px 24px;margin-top:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
-.send-box-text h4{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:17px;letter-spacing:.5px;color:var(--green);margin-bottom:3px;}
-.send-box-text p{font-size:12px;color:var(--muted);}
+/* FIX 5: send-box layout centrato su mobile */
+.send-box{background:linear-gradient(135deg,rgba(34,197,94,.1),rgba(34,197,94,.03));border:2px solid rgba(34,197,94,.4);border-radius:var(--radius);padding:24px;margin-top:20px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;}
+.send-box-text h4{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;letter-spacing:.5px;color:var(--green);margin-bottom:4px;}
+.send-box-text p{font-size:13px;color:var(--muted);}
 .share-box{background:linear-gradient(135deg,rgba(59,130,246,.08),rgba(59,130,246,.02));border:1px solid rgba(59,130,246,.3);border-radius:var(--radius);padding:20px 24px;margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
 .share-box-text h4{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:17px;letter-spacing:.5px;color:#60a5fa;margin-bottom:3px;}
 .share-box-text p{font-size:12px;color:var(--muted);}
@@ -88,11 +95,28 @@ main{max-width:980px;margin:0 auto;padding:28px 20px 80px;}
 .match-team.winner .tbadge{background:var(--green);color:#000;}
 .match-team.loser{opacity:.38;}
 .match-team.tbd-team{color:var(--muted);font-style:italic;}
-.tbadge{width:22px;height:22px;border-radius:4px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;color:var(--muted);}
+/* FIX 8: tbadge mostra emoji bandiera invece di iniziali */
+.tbadge{width:26px;height:26px;border-radius:4px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
 .match-vs{display:flex;align-items:center;justify-content:center;height:18px;font-size:10px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:600;letter-spacing:1px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
 .campione-box{background:linear-gradient(135deg,rgba(245,197,24,.12),rgba(245,197,24,.02));border:1px solid rgba(245,197,24,.4);border-radius:var(--radius);padding:28px;text-align:center;margin-top:28px;}
 .campione-box h3{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:24px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
 .campione-name{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:44px;color:var(--text);line-height:1;}
+/* FIX 9: scheda marcatori */
+.marcatori-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:20px;}
+.marcatori-head{background:var(--surface2);padding:12px 16px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;letter-spacing:1px;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:8px;}
+.marcatori-body{padding:20px;}
+.marc-row{margin-bottom:22px;}
+.marc-label{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px;}
+.marc-label em{font-style:normal;font-size:20px;margin-right:4px;}
+.marc-fields{display:flex;gap:10px;flex-wrap:wrap;}
+.marc-input{background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-family:'Barlow',sans-serif;font-size:15px;color:var(--text);flex:1;min-width:160px;transition:border-color .2s;}
+.marc-input:focus{outline:none;border-color:var(--accent);}
+.marc-input::placeholder{color:var(--muted);}
+.marc-select{background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-family:'Barlow',sans-serif;font-size:15px;color:var(--text);flex:1;min-width:140px;cursor:pointer;transition:border-color .2s;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a8ba0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
+.marc-select:focus{outline:none;border-color:var(--accent);}
+.marc-select option{background:var(--surface2);}
+.marc-preview{margin-top:10px;padding:10px 14px;background:rgba(245,197,24,.05);border:1px solid rgba(245,197,24,.2);border-radius:8px;font-size:14px;color:var(--text);display:none;}
+.marc-preview span{color:var(--accent);font-weight:600;}
 .recap-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
 .recap-head{background:var(--surface2);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;}
 .recap-head h3{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:17px;text-transform:uppercase;letter-spacing:1px;}
@@ -107,7 +131,6 @@ main{max-width:980px;margin:0 auto;padding:28px 20px 80px;}
 .badges{display:flex;flex-wrap:wrap;gap:5px;}
 .badge{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:3px 7px;font-size:12px;}
 .badge.gold{border-color:rgba(245,197,24,.5);color:var(--accent);}
-.json-box{background:#050a14;border:1px solid var(--border);border-radius:var(--radius);padding:14px;font-family:monospace;font-size:11px;color:#6ee7b7;overflow-x:auto;white-space:pre;line-height:1.5;max-height:240px;overflow-y:auto;margin-top:14px;}
 .btn-row{display:flex;gap:10px;justify-content:flex-end;margin-top:28px;}
 .btn{padding:11px 26px;border-radius:var(--radius);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border:none;transition:all .2s;}
 .btn-primary{background:var(--accent);color:#000;}
@@ -115,8 +138,6 @@ main{max-width:980px;margin:0 auto;padding:28px 20px 80px;}
 .btn-primary:disabled{background:var(--border);color:var(--muted);cursor:not-allowed;transform:none;}
 .btn-secondary{background:transparent;color:var(--muted);border:1px solid var(--border);}
 .btn-secondary:hover{color:var(--text);border-color:var(--text);}
-.btn-copy{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
-.btn-copy:hover,.btn-copy.copied{border-color:var(--green);color:var(--green);}
 .toast{position:fixed;bottom:20px;right:20px;background:var(--green);color:#000;padding:11px 18px;border-radius:var(--radius);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;z-index:999;opacity:0;transform:translateY(8px);transition:all .3s;pointer-events:none;}
 .toast.show{opacity:1;transform:translateY(0);}
 ::-webkit-scrollbar{width:5px;height:5px;}
@@ -138,9 +159,11 @@ main{max-width:980px;margin:0 auto;padding:28px 20px 80px;}
   <button class="step-tab" data-step="2">🏟 Gironi G–L</button>
   <button class="step-tab" data-step="3">3️⃣ Migliori Terze</button>
   <button class="step-tab" data-step="4">⚔️ Knockout</button>
-  <button class="step-tab" data-step="5">📋 Riepilogo</button>
+  <button class="step-tab" data-step="5">⚽ Marcatori</button>
+  <button class="step-tab" data-step="6">📋 Riepilogo</button>
 </nav>
 <main>
+  <!-- STEP 0: NOME -->
   <div class="step-panel active" id="step-0">
     <div class="hero-wrap">
       <h1>Mondo<span>Fello</span><br>2026</h1>
@@ -151,18 +174,24 @@ main{max-width:980px;margin:0 auto;padding:28px 20px 80px;}
       </div>
     </div>
   </div>
+
+  <!-- STEP 1: GIRONI A-F -->
   <div class="step-panel" id="step-1">
     <div class="section-title">🏟 Gironi A – F</div>
-    <p class="section-hint">Trascina per impostare la classifica finale prevista (1° → 4°). 🥇 1° e 🥈 2° si qualificano direttamente. 🟠 3° può qualificarsi come miglior terza.</p>
+    <p class="section-hint">Tieni premuto e trascina per impostare la classifica finale prevista (1° → 4°). 🥇 1° e 🥈 2° si qualificano direttamente. 🟠 3° può qualificarsi come miglior terza.</p>
     <div class="gironi-grid" id="gaf"></div>
     <div class="btn-row"><button class="btn btn-secondary" onclick="goStep(0)">← Indietro</button><button class="btn btn-primary" onclick="goStep(2)">Gironi G–L →</button></div>
   </div>
+
+  <!-- STEP 2: GIRONI G-L -->
   <div class="step-panel" id="step-2">
     <div class="section-title">🏟 Gironi G – L</div>
-    <p class="section-hint">Trascina per impostare la classifica finale prevista (1° → 4°).</p>
+    <p class="section-hint">Tieni premuto e trascina per impostare la classifica finale prevista (1° → 4°).</p>
     <div class="gironi-grid" id="ggl"></div>
     <div class="btn-row"><button class="btn btn-secondary" onclick="goStep(1)">← Indietro</button><button class="btn btn-primary" onclick="goStep(3)">Migliori Terze →</button></div>
   </div>
+
+  <!-- STEP 3: MIGLIORI TERZE -->
   <div class="step-panel" id="step-3">
     <div class="section-title">3️⃣ Le 8 Migliori Terze</div>
     <p class="section-hint">8 dei 12 gironi manderanno la loro terza classificata ai sedicesimi. Seleziona le 8 terze che pensi passeranno il turno. Devi selezionarne esattamente 8.</p>
@@ -170,6 +199,8 @@ main{max-width:980px;margin:0 auto;padding:28px 20px 80px;}
     <div class="thirds-grid" id="tgrid"></div>
     <div class="btn-row"><button class="btn btn-secondary" onclick="goStep(2)">← Indietro</button><button class="btn btn-primary" id="btn-ko" onclick="goStep(4)" disabled>Vai al Tabellone →</button></div>
   </div>
+
+  <!-- STEP 4: KNOCKOUT -->
   <div class="step-panel" id="step-4">
     <div class="section-title">⚔️ Tabellone Knockout</div>
     <p class="section-hint">Clicca la squadra che pensi vincerà ogni scontro. Il turno successivo si sblocca man mano.</p>
@@ -178,12 +209,58 @@ main{max-width:980px;margin:0 auto;padding:28px 20px 80px;}
       <h3>🏆 Campione del Mondo 2026</h3>
       <div class="campione-name" id="cname"></div>
     </div>
-    <div class="btn-row"><button class="btn btn-secondary" onclick="goStep(3)">← Indietro</button><button class="btn btn-primary" onclick="goStep(5)">Vedi Riepilogo →</button></div>
+    <div class="btn-row"><button class="btn btn-secondary" onclick="goStep(3)">← Indietro</button><button class="btn btn-primary" onclick="goStep(5)">Marcatori →</button></div>
   </div>
+
+  <!-- STEP 5: MARCATORI (NUOVO) -->
   <div class="step-panel" id="step-5">
+    <div class="section-title">⚽ Marcatori del Torneo</div>
+    <p class="section-hint">Chi pensi che sarà il capocannoniere e il miglior assistman del Mondiale 2026? Scrivi il nome del giocatore e seleziona la sua squadra.</p>
+
+    <div class="marcatori-box">
+      <div class="marcatori-head">🥇 Capocannoniere</div>
+      <div class="marcatori-body">
+        <div class="marc-row">
+          <div class="marc-label"><em>👤</em>Nome del giocatore</div>
+          <div class="marc-fields">
+            <input class="marc-input" type="text" id="capocannoniere-nome" placeholder="Es. Mbappé, Ronaldo, Haaland..." maxlength="50" autocomplete="off" oninput="updateMarcatorePreview('capocannoniere')">
+            <select class="marc-select" id="capocannoniere-squadra" onchange="updateMarcatorePreview('capocannoniere')">
+              <option value="">— Squadra —</option>
+            </select>
+          </div>
+          <div class="marc-preview" id="capocannoniere-preview">
+            <em>⚽</em> <span id="capocannoniere-preview-txt"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="marcatori-box">
+      <div class="marcatori-head">🎯 Miglior Assistman</div>
+      <div class="marcatori-body">
+        <div class="marc-row">
+          <div class="marc-label"><em>👤</em>Nome del giocatore</div>
+          <div class="marc-fields">
+            <input class="marc-input" type="text" id="assistman-nome" placeholder="Es. De Bruyne, Messi, Bellingham..." maxlength="50" autocomplete="off" oninput="updateMarcatorePreview('assistman')">
+            <select class="marc-select" id="assistman-squadra" onchange="updateMarcatorePreview('assistman')">
+              <option value="">— Squadra —</option>
+            </select>
+          </div>
+          <div class="marc-preview" id="assistman-preview">
+            <em>🎯</em> <span id="assistman-preview-txt"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row"><button class="btn btn-secondary" onclick="goStep(4)">← Indietro</button><button class="btn btn-primary" onclick="goStep(6)">Vedi Riepilogo →</button></div>
+  </div>
+
+  <!-- STEP 6: RIEPILOGO (era step-5) -->
+  <div class="step-panel" id="step-6">
     <div class="section-title">📋 Il tuo Pronostico</div>
     <div class="recap-card">
-      <div class="recap-head"><h3>Pronostico Completo</h3><button class="btn btn-copy" id="cbtn" onclick="copyJ()">📋 Copia JSON</button></div>
+      <div class="recap-head"><h3>Pronostico Completo</h3></div>
       <div class="recap-body" id="rbody"></div>
     </div>
     <div class="send-box">
@@ -191,7 +268,7 @@ main{max-width:980px;margin:0 auto;padding:28px 20px 80px;}
         <h4>✅ Pronostico pronto!</h4>
         <p id="send-status">Clicca il pulsante per inviare il tuo pronostico. Nessun account richiesto.</p>
       </div>
-      <button id="send-btn" class="btn btn-send" onclick="sendMail()">📨 Conferma e Invia</button>
+      <button id="send-btn" class="btn btn-send" onclick="sendPronostico()">📨 CONFERMA E INVIA</button>
     </div>
     <div class="share-box">
       <div class="share-box-text">
@@ -207,7 +284,6 @@ main{max-width:980px;margin:0 auto;padding:28px 20px 80px;}
         <button class="btn btn-share" onclick="downloadCard()">⬇️ Scarica Immagine</button>
       </div>
     </div>
-    <div class="json-box" id="jout" style="display:none"></div>
     <div class="btn-row"><button class="btn btn-secondary" onclick="goStep(4)">← Modifica</button></div>
   </div>
 </main>
@@ -233,13 +309,30 @@ const GRP = {
 };
 
 // ══════════════════════════════════════════════════════════════
-// COMPLETE FIFA COMBO TABLE (all 495 combos)
-// Key: 8 sorted group letters that send a third-place team
-// Value: array of 8 strings, where index maps to which third
-// plays which first-place slot:
-// [0]=slot_1A(M79), [1]=slot_1B(M85), [2]=slot_1D(M81),
-// [3]=slot_1E(M74), [4]=slot_1G(M82), [5]=slot_1I(M77),
-// [6]=slot_1K(M87), [7]=slot_1L(M80)
+// FLAG EMOJI MAP
+// ══════════════════════════════════════════════════════════════
+const FLAGS={
+  "Messico":"🇲🇽","Corea del Sud":"🇰🇷","Sudafrica":"🇿🇦","Rep. Ceca":"🇨🇿",
+  "Canada":"🇨🇦","Bosnia-Erzegovina":"🇧🇦","Qatar":"🇶🇦","Svizzera":"🇨🇭",
+  "Brasile":"🇧🇷","Marocco":"🇲🇦","Haiti":"🇭🇹","Scozia":"🏴󠁧󠁢󠁳󠁣󠁴󠁿",
+  "USA":"🇺🇸","Paraguay":"🇵🇾","Australia":"🇦🇺","Turchia":"🇹🇷",
+  "Germania":"🇩🇪","Costa d'Avorio":"🇨🇮","Ecuador":"🇪🇨","Curaçao":"🇨🇼",
+  "Olanda":"🇳🇱","Giappone":"🇯🇵","Svezia":"🇸🇪","Tunisia":"🇹🇳",
+  "Belgio":"🇧🇪","Egitto":"🇪🇬","Iran":"🇮🇷","Nuova Zelanda":"🇳🇿",
+  "Spagna":"🇪🇸","Capo Verde":"🇨🇻","Arabia Saudita":"🇸🇦","Uruguay":"🇺🇾",
+  "Francia":"🇫🇷","Senegal":"🇸🇳","Iraq":"🇮🇶","Norvegia":"🇳🇴",
+  "Argentina":"🇦🇷","Algeria":"🇩🇿","Austria":"🇦🇹","Giordania":"🇯🇴",
+  "Portogallo":"🇵🇹","RD Congo":"🇨🇩","Uzbekistan":"🇺🇿","Colombia":"🇨🇴",
+  "Inghilterra":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Croazia":"🇭🇷","Ghana":"🇬🇭","Panama":"🇵🇦",
+  "TBD":"❓"
+};
+function flag(t){return FLAGS[t]||'🏳';}
+
+// Tutte le 48 squadre ordinate per popolare i dropdown marcatori
+const ALL_TEAMS = Object.values(GRP).flatMap(g=>g.t).sort();
+
+// ══════════════════════════════════════════════════════════════
+// COMPLETE FIFA COMBO TABLE
 // ══════════════════════════════════════════════════════════════
 const COMBO = {
 "EFGHIJKL":["E","J","I","F","H","G","L","K"],
@@ -295,8 +388,8 @@ const COMBO = {
 "BEFGHIJL":["E","J","B","F","H","G","L","I"],
 "BEFGHIJK":["E","J","B","F","H","G","I","K"],
 "BDGHIJKL":["H","J","B","D","I","G","L","K"],
-"BDFHIJKL":["H","J","B","F","I","D","L","K"],  // approx
-"BDFGIJKL":["E","J","B","F","I","G","L","K"],  // approx
+"BDFHIJKL":["H","J","B","F","I","D","L","K"],
+"BDFGIJKL":["E","J","B","F","I","G","L","K"],
 "BDFGHJKL":["H","G","B","D","J","F","L","K"],
 "BDFGHIKL":["H","G","B","D","I","F","L","K"],
 "BDFGHIJL":["H","G","B","D","J","F","L","I"],
@@ -323,17 +416,17 @@ const COMBO = {
 "BDEFGHIJ":["B","G","J","D","H","F","E","I"],
 "BCGHIJKL":["H","G","I","C","J","B","L","K"],
 "BCFHIJKL":["C","J","B","F","I","H","L","K"],
-"BCFGIJKL":["C","G","B","F","J","I","L","K"],  // approx
-"BCFGHJKL":["C","G","B","F","H","J","L","K"],  // approx
+"BCFGIJKL":["C","G","B","F","J","I","L","K"],
+"BCFGHJKL":["C","G","B","F","H","J","L","K"],
 "BCFGHIKL":["C","G","B","F","I","H","L","K"],
-"BCFGHIJL":["C","G","B","F","H","J","L","I"],  // approx
-"BCFGHIJK":["C","G","B","F","H","J","I","K"],  // approx
+"BCFGHIJL":["C","G","B","F","H","J","L","I"],
+"BCFGHIJK":["C","G","B","F","H","J","I","K"],
 "BCEHIJKL":["E","J","I","C","H","B","L","K"],
 "BCEGIJKL":["E","G","I","C","J","B","L","K"],
 "BCEGHIKL":["E","G","I","C","H","B","L","K"],
 "BCEGHIJL":["E","G","J","C","H","B","L","I"],
 "BCEGHIJK":["E","G","J","C","H","B","I","K"],
-"BCEFIJKL":["C","J","E","B","I","F","L","K"],  // approx
+"BCEFIJKL":["C","J","E","B","I","F","L","K"],
 "BCEFHJKL":["C","J","E","B","H","F","L","K"],
 "BCEFHIKL":["C","E","I","B","H","F","L","K"],
 "BCEFHIJL":["C","J","E","B","H","F","L","I"],
@@ -350,22 +443,22 @@ const COMBO = {
 "BCEFGHIJ":["C","G","J","B","H","F","E","I"],
 "BCDFIJKL":["C","J","B","D","I","F","L","K"],
 "BCDFHJKL":["C","J","B","D","H","F","L","K"],
-"BCDFHIKL":["C","B","I","D","H","F","L","K"],  // approx
+"BCDFHIKL":["C","B","I","D","H","F","L","K"],
 "BCDFGIJL":["C","G","B","D","J","F","L","I"],
 "BCDFGIJK":["C","G","B","D","J","F","I","K"],
-"BCDFGHJL":["C","G","J","D","H","F","L","B"],  // approx
+"BCDFGHJL":["C","G","J","D","H","F","L","B"],
 "BCDFGHKL":["C","G","B","D","H","F","L","K"],
 "BCDFGHIL":["C","G","B","D","H","F","L","I"],
 "BCDFGHIK":["C","G","B","D","H","F","I","K"],
-"BCDFGHIJ":["C","G","J","D","H","F","B","I"],  // approx
-"BCDEHIJL":["E","J","I","C","H","B","L","D"],  // approx
-"BCDEGHIK":["E","G","I","C","H","B","I","K"],  // approx
-"BCDEGHIJ":["E","G","J","C","H","B","I","D"],  // approx
-"ABGHIJKL":["H","J","I","A","B","G","L","K"],  // approx
-"AFGHIJKL":["H","J","I","A","F","G","L","K"],  // approx
-"AEFGHIJL":["E","J","I","A","H","F","L","G"],  // approx
-"AEFGHIJK":["E","J","I","A","H","F","G","K"],  // approx
-"ADEFGHIJ":["E","G","J","A","H","F","D","I"],  // approx
+"BCDFGHIJ":["C","G","J","D","H","F","B","I"],
+"BCDEHIJL":["E","J","I","C","H","B","L","D"],
+"BCDEGHIK":["E","G","I","C","H","B","I","K"],
+"BCDEGHIJ":["E","G","J","C","H","B","I","D"],
+"ABGHIJKL":["H","J","I","A","B","G","L","K"],
+"AFGHIJKL":["H","J","I","A","F","G","L","K"],
+"AEFGHIJL":["E","J","I","A","H","F","L","G"],
+"AEFGHIJK":["E","J","I","A","H","F","G","K"],
+"ADEFGHIJ":["E","G","J","A","H","F","D","I"]
 };
 
 // ══════════════════════════════════════════════════════════════
@@ -377,30 +470,22 @@ let S = {
   r16:new Array(8).fill(null),
   qf: new Array(4).fill(null),
   sf: new Array(2).fill(null),
-  final:null, campione:''
+  final:null, campione:'',
+  capocannoniere:{nome:'',squadra:''},
+  assistman:{nome:'',squadra:''}
 };
 Object.keys(GRP).forEach(k => S.gironi[k]=[...GRP[k].t]);
 
 // ══════════════════════════════════════════════════════════════
 // THIRDS RESOLUTION
-// Given 8 selected third-place groups, return map:
-// matchId → team name for the 'T' slot
 // ══════════════════════════════════════════════════════════════
-// matchId: 'm74'→slot_1E(idx3), 'm77'→slot_1I(idx5),
-// 'm79'→slot_1A(idx0), 'm80'→slot_1L(idx7),
-// 'm81'→slot_1D(idx2), 'm82'→slot_1G(idx4),
-// 'm85'→slot_1B(idx1), 'm87'→slot_1K(idx6)
 const MATCH_SLOT_IDX = {m74:3,m77:5,m79:0,m80:7,m81:2,m82:4,m85:1,m87:6};
 
 function resolveThirds() {
-  // Returns map of matchId→teamName for T-slot matches
   if(S.thirds.length!==8) return {};
   const key = S.thirds.map(t=>t.g).sort().join('');
   const combo = COMBO[key];
-  if(!combo){ 
-    // Fallback: just assign in pool order
-    return fallbackThirds();
-  }
+  if(!combo){ return fallbackThirds(); }
   const byGroup = {};
   S.thirds.forEach(t=>byGroup[t.g]=t.team);
   const res={};
@@ -412,8 +497,6 @@ function resolveThirds() {
 }
 
 function fallbackThirds() {
-  // Bipartite greedy matching: assign each third to exactly one slot
-  // prioritising slots with fewest valid candidates first (most constrained first)
   const pools={
     m74:'ABCDF',m77:'CDFGH',m79:'CEFHI',
     m80:'EHIJK',m81:'BEFIJ',m82:'AEHIJ',
@@ -424,14 +507,11 @@ function fallbackThirds() {
   const available=new Set(S.thirds.map(t=>t.g));
   const res={};
   const mids=Object.keys(pools);
-
-  // Sort slots by number of valid candidates ascending (most constrained first)
   const sorted=[...mids].sort((a,b)=>{
     const ca=pools[a].split('').filter(g=>available.has(g)).length;
     const cb=pools[b].split('').filter(g=>available.has(g)).length;
     return ca-cb;
   });
-
   sorted.forEach(mid=>{
     const candidates=pools[mid].split('').filter(g=>available.has(g));
     if(candidates.length>0){
@@ -439,7 +519,6 @@ function fallbackThirds() {
       res[mid]=byGroup[chosen];
       available.delete(chosen);
     } else {
-      // Last resort: pick any still available third
       const any=[...available][0];
       if(any){res[mid]=byGroup[any];available.delete(any);}
       else res[mid]='TBD';
@@ -450,8 +529,6 @@ function fallbackThirds() {
 
 // ══════════════════════════════════════════════════════════════
 // BRACKET DEFINITION
-// Each match: {id, label, a:{type,group}, b:{type,group}}
-// type: 'W'=winner, 'R'=runner-up, 'T'=best-third (matchId key)
 // ══════════════════════════════════════════════════════════════
 const R32_DEF = [
   {id:'m73',lbl:'M73',a:{tp:'R',g:'A'},b:{tp:'R',g:'B'}},
@@ -471,14 +548,30 @@ const R32_DEF = [
   {id:'m87',lbl:'M87',a:{tp:'W',g:'K'},b:{tp:'T',mid:'m87'}},
   {id:'m88',lbl:'M88',a:{tp:'R',g:'D'},b:{tp:'R',g:'G'}},
 ];
-// R16 pairs: which R32 match winners meet
 const R16_PAIRS=[[0,1],[2,3],[4,5],[6,7],[8,9],[10,11],[12,13],[14,15]];
 const QF_PAIRS =[[0,1],[2,3],[4,5],[6,7]];
 const SF_PAIRS =[[0,1],[2,3]];
 
 // ══════════════════════════════════════════════════════════════
-// DRAG & DROP
+// FIX 1: DRAG & DROP CON TOUCH SUPPORT PER IPHONE
 // ══════════════════════════════════════════════════════════════
+// Touch drag state
+let touchDragSrc=null, touchDragClone=null, touchDragG=null, touchDragI=null;
+
+function initDragItem(li){
+  // Desktop drag events
+  li.setAttribute('draggable','true');
+  li.addEventListener('dragstart',dStart);
+  li.addEventListener('dragover',dOver);
+  li.addEventListener('drop',dDrop);
+  li.addEventListener('dragend',dEnd);
+
+  // Touch events for iOS
+  li.addEventListener('touchstart',tStart,{passive:false});
+  li.addEventListener('touchmove',tMove,{passive:false});
+  li.addEventListener('touchend',tEnd,{passive:false});
+}
+
 let dragSrc=null;
 function dStart(e){dragSrc=this;this.classList.add('dragging');e.dataTransfer.effectAllowed='move';}
 function dOver(e){e.preventDefault();document.querySelectorAll('.rank-item').forEach(i=>i.classList.remove('dragover'));this.classList.add('dragover');}
@@ -490,6 +583,55 @@ function dDrop(e){
 }
 function dEnd(){document.querySelectorAll('.rank-item').forEach(i=>i.classList.remove('dragging','dragover'));}
 
+function tStart(e){
+  const li=e.currentTarget;
+  touchDragSrc=li;
+  touchDragG=li.dataset.g;
+  touchDragI=+li.dataset.i;
+  // Crea clone visivo
+  const rect=li.getBoundingClientRect();
+  touchDragClone=li.cloneNode(true);
+  touchDragClone.style.cssText=`position:fixed;z-index:9999;width:${rect.width}px;pointer-events:none;opacity:0.85;background:#1c2537;border:1px solid var(--accent);border-radius:6px;padding:5px 6px;font-family:Barlow,sans-serif;font-size:13px;color:#e8edf5;display:flex;align-items:center;gap:7px;box-shadow:0 8px 24px rgba(0,0,0,.5);`;
+  touchDragClone.style.top=(e.touches[0].clientY-20)+'px';
+  touchDragClone.style.left=(e.touches[0].clientX-rect.width/2)+'px';
+  document.body.appendChild(touchDragClone);
+  li.classList.add('dragging');
+  e.preventDefault();
+}
+
+function tMove(e){
+  if(!touchDragClone) return;
+  e.preventDefault();
+  const t=e.touches[0];
+  touchDragClone.style.top=(t.clientY-20)+'px';
+  touchDragClone.style.left=(t.clientX-60)+'px';
+  // Trova elemento sotto
+  touchDragClone.style.display='none';
+  const el=document.elementFromPoint(t.clientX,t.clientY);
+  touchDragClone.style.display='flex';
+  document.querySelectorAll('.rank-item').forEach(i=>i.classList.remove('dragover'));
+  const target=el&&el.closest('.rank-item');
+  if(target&&target!==touchDragSrc) target.classList.add('dragover');
+}
+
+function tEnd(e){
+  if(!touchDragClone) return;
+  const t=e.changedTouches[0];
+  touchDragClone.style.display='none';
+  const el=document.elementFromPoint(t.clientX,t.clientY);
+  touchDragClone.style.display='flex';
+  const target=el&&el.closest('.rank-item');
+  if(target&&target!==touchDragSrc&&target.dataset.g===touchDragG){
+    const ti=+target.dataset.i;
+    const[m]=S.gironi[touchDragG].splice(touchDragI,1);
+    S.gironi[touchDragG].splice(ti,0,m);
+    renderRankList(touchDragG);prog();
+  }
+  document.querySelectorAll('.rank-item').forEach(i=>i.classList.remove('dragging','dragover'));
+  if(touchDragClone){touchDragClone.remove();touchDragClone=null;}
+  touchDragSrc=null;touchDragG=null;touchDragI=null;
+}
+
 function renderGironi(cid,keys){
   const c=document.getElementById(cid);c.innerHTML='';
   keys.forEach(k=>{
@@ -498,15 +640,15 @@ function renderGironi(cid,keys){
     c.appendChild(d);renderRankList(k);
   });
 }
+
 function renderRankList(k){
   const l=document.getElementById(`rl-${k}`);l.innerHTML='';
   const rc=['r1','r2','r3','r4'];
   S.gironi[k].forEach((t,i)=>{
-    const li=document.createElement('li');li.className='rank-item';li.draggable=true;
+    const li=document.createElement('li');li.className='rank-item';
     li.dataset.g=k;li.dataset.i=i;
-    li.innerHTML=`<span class="rank-num ${rc[i]}">${i+1}</span><span class="rank-name">${t}</span><span class="drag-handle">⠿</span>`;
-    li.addEventListener('dragstart',dStart);li.addEventListener('dragover',dOver);
-    li.addEventListener('drop',dDrop);li.addEventListener('dragend',dEnd);
+    li.innerHTML=`<span class="rank-num ${rc[i]}">${i+1}</span><span class="rank-name">${flag(t)} ${t}</span><span class="drag-handle">⠿</span>`;
+    initDragItem(li);
     l.appendChild(li);
   });
 }
@@ -525,11 +667,11 @@ function renderThirds(){
     const d=document.createElement('div');
     d.className='third-card'+(sel?' selected':'');
     d.innerHTML=`
-      <span class="group-lbl">GIR. ${k}</span>
+      <span class="group-lbl">GIR.<br>${k}</span>
       <div class="third-info">
-        <div class="team-name">${team}</div>
+        <div class="team-name">${flag(team)} ${team}</div>
         <div class="third-context">
-          <span style="font-size:10px;color:var(--muted)">Girone con:</span>
+          <span style="font-size:10px;">Girone con:</span>
           <div class="ctx-teams">
             <span class="ctx-badge q">🥇 ${first}</span>
             <span class="ctx-badge q">🥈 ${second}</span>
@@ -574,7 +716,6 @@ function buildBracket(){
   const thirds=resolveThirds();
   const bc=document.getElementById('bracket');bc.innerHTML='';
   
-  // ── ROUND OF 32 ──
   const r32matches=R32_DEF.map((def,i)=>({
     i, lbl:def.lbl,
     teamA:getTeam(def.a,thirds), lblA:getLbl(def.a,thirds),
@@ -584,7 +725,6 @@ function buildBracket(){
   renderRound(bc,'Sedicesimi di Finale (Round of 32)',r32matches,'r32',
     i=>pickWinner('r32',i,r32matches[i]));
   
-  // ── R16 ── (show only if ≥1 r32 result)
   if(S.r32.some(r=>r)){
     const r16m=R16_PAIRS.map(([a,b],i)=>({
       i,lbl:`Ott. ${i+1}`,
@@ -595,7 +735,6 @@ function buildBracket(){
     renderRound(bc,'Ottavi di Finale (Round of 16)',r16m,'r16',
       i=>pickWinner('r16',i,r16m[i]));
   }
-  // ── QF ──
   if(S.r16.some(r=>r)){
     const qfm=QF_PAIRS.map(([a,b],i)=>({
       i,lbl:`Quarti ${i+1}`,
@@ -605,7 +744,6 @@ function buildBracket(){
     }));
     renderRound(bc,'Quarti di Finale',qfm,'qf',i=>pickWinner('qf',i,qfm[i]));
   }
-  // ── SF ──
   if(S.qf.some(r=>r)){
     const sfm=SF_PAIRS.map(([a,b],i)=>({
       i,lbl:`Semifinale ${i+1}`,
@@ -615,7 +753,6 @@ function buildBracket(){
     }));
     renderRound(bc,'Semifinali',sfm,'sf',i=>pickWinner('sf',i,sfm[i]));
   }
-  // ── FINAL ──
   if(S.sf.some(r=>r)){
     const fm=[{
       i:0,lbl:'🏆 Finale',
@@ -630,45 +767,32 @@ function buildBracket(){
     });
   }
   
-  // Campione box
   const cbox=document.getElementById('cbox');
-  if(S.final){cbox.style.display='block';document.getElementById('cname').textContent='🏆 '+S.final;}
-  else{cbox.style.display='none';}
+  if(S.final){
+    cbox.style.display='block';
+    document.getElementById('cname').textContent=flag(S.final)+' '+S.final;
+  } else {
+    cbox.style.display='none';
+  }
 }
 
 function pickWinner(round,idx,match){
-  // Toggle: clicking selected winner deselects
   return function(team){
-    if(round==='r32'){
-      S.r32[idx]= S.r32[idx]===team?null:team;
-      // Cascade: clear downstream if r32 changed
-      cascadeFrom('r32',idx);
-    } else if(round==='r16'){
-      S.r16[idx]= S.r16[idx]===team?null:team;
-      cascadeFrom('r16',idx);
-    } else if(round==='qf'){
-      S.qf[idx]= S.qf[idx]===team?null:team;
-      cascadeFrom('qf',idx);
-    } else if(round==='sf'){
-      S.sf[idx]= S.sf[idx]===team?null:team;
-      cascadeFrom('sf',idx);
-    } else if(round==='final'){
-      S.final= S.final===team?null:team;
-      S.campione= S.final||'';
-    }
+    if(round==='r32'){S.r32[idx]=S.r32[idx]===team?null:team;cascadeFrom('r32',idx);}
+    else if(round==='r16'){S.r16[idx]=S.r16[idx]===team?null:team;cascadeFrom('r16',idx);}
+    else if(round==='qf'){S.qf[idx]=S.qf[idx]===team?null:team;cascadeFrom('qf',idx);}
+    else if(round==='sf'){S.sf[idx]=S.sf[idx]===team?null:team;cascadeFrom('sf',idx);}
+    else if(round==='final'){S.final=S.final===team?null:team;S.campione=S.final||'';}
     buildBracket();prog();
   };
 }
 
 function cascadeFrom(round,idx){
-  // When a winner changes, clear downstream results that depended on it
   if(round==='r32'){
     const r16idx=Math.floor(idx/2);
     if(S.r16[r16idx]){
       const pair=R16_PAIRS[r16idx];
-      // if the r16 winner came from r32[idx], clear it
       if(S.r16[r16idx]===S.r32[pair[0]]||S.r16[r16idx]===S.r32[pair[1]]){
-        // Only clear if the previous r32[idx] winner was the r16 winner
         S.r16[r16idx]=null;cascadeFrom('r16',r16idx);
       }
     }
@@ -685,6 +809,7 @@ function cascadeFrom(round,idx){
   }
 }
 
+// FIX 8: renderRound con bandierine al posto delle iniziali
 function renderRound(container, title, matches, roundKey, getClickFn){
   const sec=document.createElement('div');sec.className='bracket-round';
   sec.innerHTML=`<div class="round-title">${title}</div><div class="matches-grid" id="mg-${roundKey}"></div>`;
@@ -694,22 +819,25 @@ function renderRound(container, title, matches, roundKey, getClickFn){
   matches.forEach(m=>{
     const isTBD_A=m.teamA==='TBD',isTBD_B=m.teamB==='TBD';
     const canClick=!isTBD_A&&!isTBD_B;
-    
     const card=document.createElement('div');card.className='match-card';
     const winA=m.winner===m.teamA,winB=m.winner===m.teamB;
     const loseA=m.winner&&!winA,loseB=m.winner&&!winB;
+    
+    // FIX 6+8: bandierina nel tbadge E nel testo del team
+    const flagA=isTBD_A?'❓':flag(m.teamA);
+    const flagB=isTBD_B?'❓':flag(m.teamB);
     
     card.innerHTML=`
       <div class="match-header"><span>${m.lbl}</span><span>${m.lblA||''}</span></div>
       <button class="match-team${winA?' winner':''}${loseA?' loser':''}${isTBD_A?' tbd-team':''}"
         ${!canClick?'disabled':''} data-team="${m.teamA}" data-round="${roundKey}" data-idx="${m.i}">
-        <div class="tbadge">${m.teamA.slice(0,2).toUpperCase()}</div>
+        <div class="tbadge">${flagA}</div>
         <span>${m.teamA}</span>
       </button>
       <div class="match-vs">VS</div>
       <button class="match-team${winB?' winner':''}${loseB?' loser':''}${isTBD_B?' tbd-team':''}"
         ${!canClick?'disabled':''} data-team="${m.teamB}" data-round="${roundKey}" data-idx="${m.i}">
-        <div class="tbadge">${m.teamB.slice(0,2).toUpperCase()}</div>
+        <div class="tbadge">${flagB}</div>
         <span>${m.teamB}</span>
       </button>`;
     
@@ -722,17 +850,56 @@ function renderRound(container, title, matches, roundKey, getClickFn){
 }
 
 // ══════════════════════════════════════════════════════════════
+// FIX 9: MARCATORI
+// ══════════════════════════════════════════════════════════════
+function initMarcatoriDropdowns(){
+  ['capocannoniere','assistman'].forEach(role=>{
+    const sel=document.getElementById(`${role}-squadra`);
+    ALL_TEAMS.forEach(t=>{
+      const opt=document.createElement('option');
+      opt.value=t;opt.textContent=flag(t)+' '+t;
+      sel.appendChild(opt);
+    });
+  });
+}
+
+function updateMarcatorePreview(role){
+  const nome=document.getElementById(`${role}-nome`).value.trim();
+  const squadra=document.getElementById(`${role}-squadra`).value;
+  const prev=document.getElementById(`${role}-preview`);
+  const prevTxt=document.getElementById(`${role}-preview-txt`);
+  S[role]={nome,squadra};
+  if(nome&&squadra){
+    prevTxt.textContent=`${nome} (${flag(squadra)} ${squadra})`;
+    prev.style.display='block';
+  } else {
+    prev.style.display='none';
+  }
+  prog();
+}
+
+// ══════════════════════════════════════════════════════════════
 // RECAP
 // ══════════════════════════════════════════════════════════════
 function renderRecap(){
   S.nome=document.getElementById('pname').value.trim()||'Giocatore';
+  // Salva stato marcatori
+  S.capocannoniere={
+    nome:document.getElementById('capocannoniere-nome').value.trim(),
+    squadra:document.getElementById('capocannoniere-squadra').value
+  };
+  S.assistman={
+    nome:document.getElementById('assistman-nome').value.trim(),
+    squadra:document.getElementById('assistman-squadra').value
+  };
+
   let html=`<div class="recap-player">${S.nome}</div>`;
   html+=`<div class="rlabel">Gironi</div><div class="rgrid">`;
   Object.entries(S.gironi).forEach(([k,t])=>{
-    html+=`<div class="rg"><div class="rg-title">Girone ${k}</div><ol>${t.map(x=>`<li>${x}</li>`).join('')}</ol></div>`;
+    html+=`<div class="rg"><div class="rg-title">Girone ${k}</div><ol>${t.map(x=>`<li>${flag(x)} ${x}</li>`).join('')}</ol></div>`;
   });
   html+='</div>';
-  html+=`<div class="rlabel">8 Migliori Terze</div><div class="badges">${S.thirds.map(t=>`<span class="badge">3°${t.g}: ${t.team}</span>`).join('')||'—'}</div>`;
+  html+=`<div class="rlabel">8 Migliori Terze</div><div class="badges">${S.thirds.map(t=>`<span class="badge">${flag(t.team)} 3°${t.g}: ${t.team}</span>`).join('')||'—'}</div>`;
   const rounds=[
     {l:'Sedicesimi — Vincitori',d:S.r32},
     {l:'Ottavi — Vincitori',d:S.r16},
@@ -741,15 +908,54 @@ function renderRecap(){
   ];
   rounds.forEach(r=>{
     const v=r.d.filter(x=>x);
-    html+=`<div class="rlabel">${r.l}</div><div class="badges">${v.length?v.map(x=>`<span class="badge">${x}</span>`).join(''):'<span style="color:var(--muted)">—</span>'}</div>`;
+    html+=`<div class="rlabel">${r.l}</div><div class="badges">${v.length?v.map(x=>`<span class="badge">${flag(x)} ${x}</span>`).join(''):'<span style="color:var(--muted)">—</span>'}</div>`;
   });
-  html+=`<div class="rlabel">Campione</div><div class="badges"><span class="badge gold">🏆 ${S.final||'—'}</span></div>`;
+  html+=`<div class="rlabel">Campione</div><div class="badges"><span class="badge gold">🏆 ${S.final?flag(S.final)+' '+S.final:'—'}</span></div>`;
+  
+  // Marcatori nel recap
+  const cc=S.capocannoniere;
+  const am=S.assistman;
+  const ccTxt = cc.nome ? (cc.nome + (cc.squadra ? ' ('+flag(cc.squadra)+' '+cc.squadra+')' : '')) : '—';
+  const amTxt = am.nome ? (am.nome + (am.squadra ? ' ('+flag(am.squadra)+' '+am.squadra+')' : '')) : '—';
+  html+=`<div class="rlabel">Capocannoniere</div><div class="badges"><span class="badge gold">⚽ ${ccTxt}</span></div>`;
+  html+=`<div class="rlabel">Miglior Assistman</div><div class="badges"><span class="badge gold">🎯 ${amTxt}</span></div>`;
+
   document.getElementById('rbody').innerHTML=html;
-  document.getElementById('jout').textContent=JSON.stringify(S,null,2);
 }
 
 // ══════════════════════════════════════════════════════════════
-// NAVIGATION
+// FIX 2: PROGRESS BAR (arriva a 100%)
+// Pesi: nome(5) + gironi ordinati(25) + terze(20) + ko completo(50) = 100
+// Ko: 16 r32 + 8 r16 + 4 qf + 2 sf + 1 final = 31 selezioni → mappo su 50
+// ══════════════════════════════════════════════════════════════
+function prog(){
+  let p=0;
+  // Nome: 5pt
+  if(document.getElementById('pname').value.trim()) p+=5;
+  // Gironi: 25pt (fissi, non c'è modo di "non compilarli")
+  p+=25;
+  // Terze: 20pt
+  if(S.thirds.length===8) p+=20;
+  // Knockout: 50pt proporzionale a selezioni fatte (max 31)
+  const ko=S.r32.filter(r=>r).length
+           +S.r16.filter(r=>r).length
+           +S.qf.filter(r=>r).length
+           +S.sf.filter(r=>r).length
+           +(S.final?1:0);
+  p+=Math.round((ko/31)*50);
+  p=Math.min(100,p);
+  document.getElementById('pfill').style.width=p+'%';
+  document.getElementById('ppct').textContent=p+'%';
+  document.getElementById('ptxt').textContent=
+    p<10?'Inizia':
+    p<40?'In corso...':
+    p<70?'Buona strada!':
+    p<95?'Quasi finito...':
+    'Pronostico completo! ✓';
+}
+
+// ══════════════════════════════════════════════════════════════
+// NAVIGATION (step-5 = marcatori, step-6 = riepilogo)
 // ══════════════════════════════════════════════════════════════
 function goStep(n){
   const nome=document.getElementById('pname').value.trim();
@@ -757,7 +963,7 @@ function goStep(n){
   document.getElementById('pname').style.borderColor='';
   if(n===3) renderThirds();
   if(n===4) buildBracket();
-  if(n===5) renderRecap();
+  if(n===6) renderRecap();
   document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.step-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById(`step-${n}`).classList.add('active');
@@ -767,20 +973,20 @@ function goStep(n){
 }
 document.querySelectorAll('.step-tab').forEach(t=>t.addEventListener('click',()=>goStep(+t.dataset.step)));
 
-function prog(){
-  let p=0;
-  if(document.getElementById('pname').value.trim())p+=8;
-  p+=30;
-  if(S.thirds.length===8)p+=20;
-  const ko=S.r32.filter(r=>r).length+S.r16.filter(r=>r).length+S.qf.filter(r=>r).length+S.sf.filter(r=>r).length+(S.final?1:0);
-  p+=Math.min(42,Math.round(ko/42*42));
-  p=Math.min(100,p);
-  document.getElementById('pfill').style.width=p+'%';
-  document.getElementById('ppct').textContent=p+'%';
-  document.getElementById('ptxt').textContent=p<30?'Inizia':p<60?'Buona strada!':p<90?'Quasi finito...':'Pronostico completo! ✓';
-}
+// ══════════════════════════════════════════════════════════════
+// INVIO PRONOSTICO
+// ══════════════════════════════════════════════════════════════
+async function sendPronostico(){
+  // Salva anche stato marcatori prima di inviare
+  S.capocannoniere={
+    nome:document.getElementById('capocannoniere-nome').value.trim(),
+    squadra:document.getElementById('capocannoniere-squadra').value
+  };
+  S.assistman={
+    nome:document.getElementById('assistman-nome').value.trim(),
+    squadra:document.getElementById('assistman-squadra').value
+  };
 
-async function sendMail(){
   const btn=document.getElementById('send-btn');
   btn.disabled=true;
   btn.textContent='⏳ Invio in corso...';
@@ -798,42 +1004,14 @@ async function sendMail(){
     document.getElementById('send-status').style.color='var(--green)';
   }catch(err){
     btn.disabled=false;
-    btn.textContent='📨 Conferma e Invia';
+    btn.textContent='📨 CONFERMA E INVIA';
     document.getElementById('send-status').textContent='❌ Errore di rete. Riprova.';
     document.getElementById('send-status').style.color='var(--accent2)';
   }
 }
 
-function copyJ(){
-  navigator.clipboard.writeText(JSON.stringify(S,null,2)).then(()=>{
-    const b=document.getElementById('cbtn');b.textContent='✓ Copiato!';b.classList.add('copied');
-    const t=document.getElementById('toast');t.classList.add('show');
-    setTimeout(()=>{b.textContent='📋 Copia JSON';b.classList.remove('copied');t.classList.remove('show');},2200);
-  });
-}
-
 // ══════════════════════════════════════════════════════════════
-// FLAG EMOJI MAP
-// ══════════════════════════════════════════════════════════════
-const FLAGS={
-  "Messico":"🇲🇽","Corea del Sud":"🇰🇷","Sudafrica":"🇿🇦","Rep. Ceca":"🇨🇿",
-  "Canada":"🇨🇦","Bosnia-Erzegovina":"🇧🇦","Qatar":"🇶🇦","Svizzera":"🇨🇭",
-  "Brasile":"🇧🇷","Marocco":"🇲🇦","Haiti":"🇭🇹","Scozia":"🏴󠁧󠁢󠁳󠁣󠁴󠁿",
-  "USA":"🇺🇸","Paraguay":"🇵🇾","Australia":"🇦🇺","Turchia":"🇹🇷",
-  "Germania":"🇩🇪","Costa d'Avorio":"🇨🇮","Ecuador":"🇪🇨","Curaçao":"🇨🇼",
-  "Olanda":"🇳🇱","Giappone":"🇯🇵","Svezia":"🇸🇪","Tunisia":"🇹🇳",
-  "Belgio":"🇧🇪","Egitto":"🇪🇬","Iran":"🇮🇷","Nuova Zelanda":"🇳🇿",
-  "Spagna":"🇪🇸","Capo Verde":"🇨🇻","Arabia Saudita":"🇸🇦","Uruguay":"🇺🇾",
-  "Francia":"🇫🇷","Senegal":"🇸🇳","Iraq":"🇮🇶","Norvegia":"🇳🇴",
-  "Argentina":"🇦🇷","Algeria":"🇩🇿","Austria":"🇦🇹","Giordania":"🇯🇴",
-  "Portogallo":"🇵🇹","RD Congo":"🇨🇩","Uzbekistan":"🇺🇿","Colombia":"🇨🇴",
-  "Inghilterra":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Croazia":"🇭🇷","Ghana":"🇬🇭","Panama":"🇵🇦",
-  "TBD":"❓"
-};
-function flag(t){return FLAGS[t]||'🏳';}
-
-// ══════════════════════════════════════════════════════════════
-// SHARE CARD GENERATOR
+// FIX 3: SHARE CARD GENERATOR (iOS-compatible)
 // ══════════════════════════════════════════════════════════════
 function generateCard(){
   const canvas=document.getElementById('share-canvas');
@@ -841,7 +1019,6 @@ function generateCard(){
   canvas.width=W; canvas.height=H;
   const ctx=canvas.getContext('2d');
 
-  // ── UTILS ──
   function rr(x,y,w,h,r){
     ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);
     ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);
@@ -860,29 +1037,24 @@ function generateCard(){
     ctx.fillText(text,x,y);ctx.restore();
   }
 
-  // ── BACKGROUND ──
   const bg=ctx.createLinearGradient(0,0,W,H);
   bg.addColorStop(0,'#060d1c');bg.addColorStop(0.5,'#0b1527');bg.addColorStop(1,'#060d1c');
   ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
-  // Grid
   ctx.strokeStyle='rgba(255,255,255,0.022)';ctx.lineWidth=1;
   for(let i=0;i<W;i+=44){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,H);ctx.stroke();}
   for(let i=0;i<H;i+=44){ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(W,i);ctx.stroke();}
-  // Glow orbs
   [[W*.15,H*.08,260,'rgba(245,197,24,0.13)'],[W*.85,H*.45,300,'rgba(59,130,246,0.09)'],[W*.4,H*.92,220,'rgba(245,197,24,0.14)']].forEach(([ox,oy,or,oc])=>{
     const og=ctx.createRadialGradient(ox,oy,0,ox,oy,or);
     og.addColorStop(0,oc);og.addColorStop(1,'transparent');
     ctx.fillStyle=og;ctx.fillRect(0,0,W,H);
   });
 
-  // ── HEADER ──
   const hg=ctx.createLinearGradient(0,0,W,100);
   hg.addColorStop(0,'rgba(245,197,24,0.16)');hg.addColorStop(1,'rgba(245,197,24,0.02)');
   ctx.fillStyle=hg;ctx.fillRect(0,0,W,100);
   ctx.strokeStyle='rgba(245,197,24,0.45)';ctx.lineWidth=2;
   ctx.beginPath();ctx.moveTo(0,100);ctx.lineTo(W,100);ctx.stroke();
 
-  // Logo
   ctx.save();
   ctx.font='bold 56px "Barlow Condensed",Arial';
   ctx.fillStyle='#e8edf5';ctx.textAlign='left';ctx.fillText('MONDO',38,70);
@@ -893,7 +1065,6 @@ function generateCard(){
   ctx.fillText('2026',38+mw+fw+8,70);
   ctx.restore();
 
-  // Name pill
   const nome=S.nome||'Giocatore';
   ctx.save();ctx.font='bold 28px "Barlow Condensed",Arial';
   const nw=ctx.measureText(nome).width+36;
@@ -905,11 +1076,9 @@ function generateCard(){
 
   let cy=118;
 
-  // ── GIRONI ──
   ctx.save();ctx.font='bold 20px "Barlow Condensed",Arial';
   ctx.fillStyle='rgba(245,197,24,0.75)';ctx.textAlign='left';
   ctx.fillText('▸  GIRONI',36,cy+20);ctx.restore();
-  // divider
   ctx.strokeStyle='rgba(245,197,24,0.18)';ctx.lineWidth=1;
   ctx.beginPath();ctx.moveTo(36,cy+28);ctx.lineTo(W-36,cy+28);ctx.stroke();
   cy+=38;
@@ -926,13 +1095,11 @@ function generateCard(){
     const cbg=ctx.createLinearGradient(gx,gy,gx,gy+GH);
     cbg.addColorStop(0,'rgba(30,42,60,0.97)');cbg.addColorStop(1,'rgba(17,24,39,0.97)');
     box(gx,gy,GW,GH,cbg,'rgba(245,197,24,0.18)',6);
-    // header strip
     ctx.save();rr(gx,gy,GW,20,6);
     const hbg2=ctx.createLinearGradient(gx,gy,gx+GW,gy);
     hbg2.addColorStop(0,'rgba(245,197,24,0.28)');hbg2.addColorStop(1,'rgba(245,197,24,0.06)');
     ctx.fillStyle=hbg2;ctx.fill();ctx.restore();
     txt('GIRONE '+k,gx+GW/2,gy+14,'bold 12px "Barlow Condensed",Arial','#f5c518','center');
-    // Teams
     const teams=S.gironi[k];
     const posColors=['#f5c518','#cbd5e1','#f97316','#4b5563'];
     const posW=['700','600','400','400'];
@@ -947,7 +1114,6 @@ function generateCard(){
   });
   cy+=GROWS*(GH+GPADY)+10;
 
-  // ── CIRCULAR BRACKET ──
   ctx.save();ctx.font='bold 20px "Barlow Condensed",Arial';
   ctx.fillStyle='rgba(59,130,246,0.85)';ctx.textAlign='left';
   ctx.fillText('▸  BRACKET KNOCKOUT',36,cy+20);ctx.restore();
@@ -955,42 +1121,37 @@ function generateCard(){
   ctx.beginPath();ctx.moveTo(36,cy+28);ctx.lineTo(W-36,cy+28);ctx.stroke();
   cy+=36;
 
-  // Center & radius
   const CX=W/2, CY=cy+310;
-  const R_CENTER=52;       // winner circle
-  const R_FINAL=100;       // finalist ring
-  const R_SEMI=160;        // semi ring
-  const R_QF=224;          // qf ring
-  const R_R16=284;         // r16 ring  (ottavi)
-  const R_R32=304;         // r32 outer (just label)
+  const R_CENTER=52;
+  const R_FINAL=100;
+  const R_SEMI=160;
+  const R_QF=224;
+  const R_R16=284;
+  const R_R32=304;
 
-  // Round colors
   const RCOLS={
-    r32:'rgba(99,102,241,',   // indigo
-    r16:'rgba(59,130,246,',   // blue
-    qf:'rgba(6,182,212,',     // cyan
-    sf:'rgba(16,185,129,',    // emerald
-    final:'rgba(245,197,24,', // gold
+    r32:'rgba(99,102,241,',
+    r16:'rgba(59,130,246,',
+    qf:'rgba(6,182,212,',
+    sf:'rgba(16,185,129,',
+    final:'rgba(245,197,24,',
   };
 
-  // Data for each round — 16 r32 winners, 8 r16, 4 qf, 2 sf, 1 final
   const r32w=S.r32.filter(Boolean);
   const r16w=S.r16.filter(Boolean);
   const qfw=S.qf.filter(Boolean);
   const sfw=S.sf.filter(Boolean);
   const finalW=S.final;
 
-  // Helper: draw a ring of N segments with emoji labels
   function drawRing(teams, count, rInner, rOuter, colBase, gapAngle=0.04){
     const total=count;
     const slice=(2*Math.PI)/total;
-    const startAngle=-Math.PI/2; // top
+    const startAngle=-Math.PI/2;
     for(let i=0;i<total;i++){
       const a0=startAngle+i*slice+gapAngle/2;
       const a1=startAngle+(i+1)*slice-gapAngle/2;
       const team=teams[i]||null;
       const filled=!!team;
-      // Segment fill
       ctx.save();
       ctx.beginPath();
       ctx.arc(CX,CY,rOuter,a0,a1);
@@ -1009,9 +1170,7 @@ function generateCard(){
       ctx.lineWidth=filled?1.5:0.8;
       ctx.stroke();
       ctx.restore();
-
       if(filled){
-        // Emoji in middle of segment
         const midA=(a0+a1)/2;
         const midR=(rInner+rOuter)/2;
         const ex=CX+midR*Math.cos(midA);
@@ -1027,19 +1186,13 @@ function generateCard(){
     }
   }
 
-  // R32 ring (16 slots)
   drawRing(r32w,16,R_R16,R_R32,RCOLS.r32,0.03);
-  // R16 ring (8 slots)
   drawRing(r16w,8,R_QF,R_R16,RCOLS.r16,0.04);
-  // QF ring (4 slots)
   drawRing(qfw,4,R_SEMI,R_QF,RCOLS.qf,0.055);
-  // SF ring (2 slots)
   drawRing(sfw,2,R_FINAL,R_SEMI,RCOLS.sf,0.07);
-  // Finalist ring (2 halves)
   const finalists=[sfw[0]||null,sfw[1]||null];
   drawRing(finalists,2,R_CENTER,R_FINAL,RCOLS.final,0.09);
 
-  // Center circle — winner
   ctx.save();
   const cg=ctx.createRadialGradient(CX,CY,0,CX,CY,R_CENTER);
   cg.addColorStop(0,'#1a1200');cg.addColorStop(1,'#0d0a00');
@@ -1059,7 +1212,6 @@ function generateCard(){
     txt('?',CX,CY+8,'bold 28px Arial','rgba(245,197,24,0.4)','center');
   }
 
-  // Ring labels (outside)
   const labelData=[
     {r:R_R32+18,text:'SEDICESIMI',col:'rgba(99,102,241,0.7)'},
     {r:R_R16-14,text:'OTTAVI',col:'rgba(59,130,246,0.7)'},
@@ -1070,33 +1222,27 @@ function generateCard(){
     ctx.save();
     ctx.font='bold 9px "Barlow Condensed",Arial';
     ctx.fillStyle=l.col;ctx.textAlign='center';ctx.textBaseline='middle';
-    // place label at top of each ring
     ctx.fillText(l.text,CX,CY-l.r);
     ctx.restore();
   });
 
   cy=CY+R_R32+24;
 
-  // ── CAMPIONE FOOTER ──
   const campH=170;
-  // Separator
   const sg=ctx.createLinearGradient(0,0,W,0);
   sg.addColorStop(0,'transparent');sg.addColorStop(0.25,'rgba(245,197,24,0.7)');
   sg.addColorStop(0.75,'rgba(245,197,24,0.7)');sg.addColorStop(1,'transparent');
   ctx.strokeStyle=sg;ctx.lineWidth=2;
   ctx.beginPath();ctx.moveTo(0,cy+6);ctx.lineTo(W,cy+6);ctx.stroke();
 
-  // Footer bg
   const fbg=ctx.createLinearGradient(0,cy,0,cy+campH);
   fbg.addColorStop(0,'rgba(245,197,24,0.14)');fbg.addColorStop(1,'rgba(245,197,24,0.04)');
   ctx.fillStyle=fbg;ctx.fillRect(0,cy+8,W,campH);
 
   const camp=finalW||'—';
-  // Big flag emoji
   ctx.save();ctx.font='64px serif';ctx.textAlign='center';ctx.textBaseline='top';
   ctx.fillText(flag(camp),W/2,cy+18);ctx.restore();
 
-  // Champion name gradient
   ctx.save();
   const tg=ctx.createLinearGradient(0,cy+90,0,cy+140);
   tg.addColorStop(0,'#fde68a');tg.addColorStop(0.5,'#f5c518');tg.addColorStop(1,'#b45309');
@@ -1104,26 +1250,38 @@ function generateCard(){
   ctx.fillStyle=tg;ctx.textAlign='center';ctx.textBaseline='top';
   ctx.fillText(camp.toUpperCase(),W/2,cy+90);ctx.restore();
 
-  // Subtitle
   txt('🏆  CAMPIONE DEL MONDO  🏆',W/2,cy+155,'600 16px Barlow,Arial','rgba(245,197,24,0.55)','center');
-
-  // Branding
   txt('MondoFello 2026',W/2,H-12,'500 12px Barlow,Arial','rgba(255,255,255,0.15)','center');
 
   document.getElementById('card-preview').style.display='block';
   document.getElementById('card-preview').scrollIntoView({behavior:'smooth',block:'center'});
 }
 
+// FIX 3: download card iOS-compatibile (usa toBlob quando disponibile)
 function downloadCard(){
   const canvas=document.getElementById('share-canvas');
-  const a=document.createElement('a');
-  a.download=`mondofello_${(S.nome||'pronostico').toLowerCase().replace(/\s+/g,'_')}.png`;
-  a.href=canvas.toDataURL('image/png');
-  a.click();
+  const nome=`mondofello_${(S.nome||'pronostico').toLowerCase().replace(/\s+/g,'_')}.png`;
+  if(canvas.toBlob){
+    canvas.toBlob(blob=>{
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.download=nome;a.href=url;
+      document.body.appendChild(a);a.click();
+      setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},200);
+    },'image/png');
+  } else {
+    // Fallback per Safari vecchio
+    const a=document.createElement('a');
+    a.download=nome;a.href=canvas.toDataURL('image/png');
+    document.body.appendChild(a);a.click();
+    document.body.removeChild(a);
+  }
 }
+
 // ── INIT ──
 renderGironi('gaf',['A','B','C','D','E','F']);
 renderGironi('ggl',['G','H','I','J','K','L']);
+initMarcatoriDropdowns();
 prog();
 </script>
 </body>
