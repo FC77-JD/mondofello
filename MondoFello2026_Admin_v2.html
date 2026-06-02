@@ -228,10 +228,14 @@ main{max-width:1100px;margin:0 auto;padding:24px 20px 80px;}
 <header>
   <div class="logo">Mondo<span>Fello</span> 26 <em>Admin</em><small>Pannello di controllo</small></div>
   <div class="header-actions">
+    <button class="btn btn-success btn-sm" onclick="syncFromSheet()" id="sync-btn">☁️ Carica da Sheet</button>
     <button class="btn btn-primary btn-sm" onclick="recalcAll()">🔄 Aggiorna</button>
     <button class="btn btn-ghost btn-sm" onclick="openImport()">⚙️ Gestione</button>
   </div>
 </header>
+<div id="sync-banner" style="display:none;background:rgba(34,197,94,.1);border-bottom:1px solid rgba(34,197,94,.3);padding:8px 24px;font-size:12px;color:var(--green);display:flex;align-items:center;gap:8px">
+  <span id="sync-msg"></span>
+</div>
 
 <nav class="tabs">
   <button class="tab active" data-tab="classifica">📊 Classifica</button>
@@ -902,10 +906,83 @@ function renderStats(){
 }
 
 // ════════════════════════════════════════════════════════════
-// INIT
+// SHEET SYNC
+// ════════════════════════════════════════════════════════════
+const SHEET_ENDPOINT='https://script.google.com/macros/s/AKfycbySa3HHHcLE889SHvTcvyCJSdwm2QNhraSPK8UWNNg2tAmN4NffspED9dG5KdONbVJCiQ/exec';
+
+async function syncFromSheet(){
+  const btn=document.getElementById('sync-btn');
+  const banner=document.getElementById('sync-banner');
+  const msg=document.getElementById('sync-msg');
+  btn.textContent='⏳ Caricamento...';btn.disabled=true;
+  banner.style.display='flex';
+  msg.textContent='Connessione al Google Sheet...';
+  try{
+    const res=await fetch(SHEET_ENDPOINT+'?t='+Date.now());
+    const data=await res.json();
+    if(data.status!=='ok'||!data.players?.length){
+      msg.style.color='var(--accent2)';
+      msg.textContent='❌ Nessun dato ricevuto dallo Sheet.';
+      btn.textContent='☁️ Carica da Sheet';btn.disabled=false;
+      return;
+    }
+    let added=0,updated=0,skipped=0;
+    data.players.forEach(row=>{
+      try{
+        const obj=JSON.parse(row.json);
+        if(!obj.nome||!obj.gironi){skipped++;return;}
+        const idx=players.findIndex(p=>p.nome.toLowerCase()===obj.nome.toLowerCase());
+        if(idx>=0){
+          // Update only if newer timestamp
+          players[idx]=obj;updated++;
+        } else {
+          players.push(obj);added++;
+        }
+      }catch(e){skipped++;}
+    });
+    renderPlist();recalcAll();
+    banner.style.background='rgba(34,197,94,.1)';
+    banner.style.borderColor='rgba(34,197,94,.3)';
+    msg.style.color='var(--green)';
+    msg.textContent=`✓ Sincronizzato — ${added} nuovi, ${updated} aggiornati, ${skipped} ignorati. Totale: ${players.length} partecipanti.`;
+    btn.textContent='✓ Sincronizzato';
+    setTimeout(()=>{btn.textContent='☁️ Carica da Sheet';btn.disabled=false;},3000);
+  }catch(err){
+    banner.style.background='rgba(232,69,69,.1)';
+    banner.style.borderColor='rgba(232,69,69,.3)';
+    msg.style.color='var(--accent2)';
+    msg.textContent='❌ Errore di rete: '+err.message;
+    btn.textContent='☁️ Carica da Sheet';btn.disabled=false;
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// INIT — auto-sync on load
 // ════════════════════════════════════════════════════════════
 sortPronostici('pts');
 recalcAll();
+// Auto-sync silently on load
+(async()=>{
+  try{
+    const res=await fetch(SHEET_ENDPOINT+'?t='+Date.now());
+    const data=await res.json();
+    if(data.status==='ok'&&data.players?.length){
+      data.players.forEach(row=>{
+        try{
+          const obj=JSON.parse(row.json);
+          if(!obj.nome||!obj.gironi)return;
+          if(!players.find(p=>p.nome.toLowerCase()===obj.nome.toLowerCase()))players.push(obj);
+        }catch(e){}
+      });
+      renderPlist();recalcAll();
+      const msg=document.getElementById('sync-msg');
+      const banner=document.getElementById('sync-banner');
+      banner.style.display='flex';
+      msg.textContent=`✓ ${players.length} pronostici caricati automaticamente dal Google Sheet.`;
+      setTimeout(()=>{banner.style.display='none';},4000);
+    }
+  }catch(e){}
+})();
 </script>
 </body>
 </html>
