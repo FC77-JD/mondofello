@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MondoFello 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0f1e;--surface:#111827;--surface2:#1c2537;--border:#2a3548;--accent:#f5c518;--accent2:#e84545;--text:#e8edf5;--muted:#7a8ba0;--green:#22c55e;--radius:10px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:15px;min-height:100vh;}
+header{background:linear-gradient(135deg,#0a0f1e,#0d1a3a);border-bottom:2px solid var(--accent);padding:18px 28px;position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;line-height:1;}
+.logo span{color:var(--accent);}
+.logo small{display:block;font-size:11px;font-weight:400;color:var(--muted);letter-spacing:3px;text-transform:uppercase;}
+.progress-wrap{flex:1;max-width:360px;}
+.progress-label{font-size:11px;color:var(--muted);margin-bottom:5px;display:flex;justify-content:space-between;}
+.progress-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .4s ease;width:0%;}
+.steps-nav{display:flex;gap:0;padding:0 28px;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;}
+.step-tab{padding:11px 16px;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:12px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;}
+.step-tab:hover{color:var(--text);}
+.step-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+main{max-width:980px;margin:0 auto;padding:28px 20px 80px;}
+.step-panel{display:none;}
+.step-panel.active{display:block;}
+.hero-wrap{text-align:center;padding:50px 20px;}
+.hero-wrap h1{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:52px;line-height:1;margin-bottom:6px;}
+.hero-wrap h1 span{color:var(--accent);}
+.hero-wrap p{color:var(--muted);margin-bottom:32px;}
+.name-input{background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);padding:14px 20px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:26px;color:var(--text);width:100%;max-width:380px;text-align:center;letter-spacing:1px;transition:border-color .2s;}
+.name-input:focus{outline:none;border-color:var(--accent);}
+.name-input::placeholder{color:var(--muted);font-weight:400;}
+.section-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:8px;}
+.section-hint{color:var(--muted);font-size:13px;margin-bottom:18px;line-height:1.6;}
+.gironi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:14px;}
+.girone-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.girone-header{background:var(--surface2);padding:9px 13px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;justify-content:space-between;}
+.girone-status{font-size:10px;color:var(--muted);font-weight:400;letter-spacing:0;}
+.rank-list{padding:6px;list-style:none;}
+/* FIX 1: touch-friendly rank items - no user-select issue */
+.rank-item{display:flex;align-items:center;gap:7px;padding:5px 6px;border-radius:6px;transition:background .15s;border:1px solid transparent;touch-action:none;}
+.rank-item:hover{background:var(--surface2);}
+.rank-item.dragging{opacity:.45;border-color:var(--accent);background:var(--surface2);}
+.rank-item.dragover{border-color:var(--accent);background:rgba(245,197,24,.07);}
+.rank-num{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;flex-shrink:0;}
+.rank-num.r1{background:var(--accent);color:#000;}
+.rank-num.r2{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
+.rank-num.r3{background:rgba(232,69,69,.15);color:#e84545;border:1px solid rgba(232,69,69,.3);}
+.rank-num.r4{background:transparent;color:var(--muted);}
+.rank-name{font-size:13px;font-weight:500;flex:1;}
+/* FIX 1: drag handle zona touch ampia */
+.drag-handle{color:var(--muted);font-size:18px;padding:4px 6px;cursor:grab;touch-action:none;flex-shrink:0;}
+/* FIX 7: thirds card - layout colonna fisso, testo terza più grande */
+.thirds-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:20px;}
+.third-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 13px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:border-color .15s;}
+.third-card:hover{border-color:var(--muted);}
+.third-card.selected{border-color:var(--green);background:rgba(34,197,94,.06);}
+.group-lbl{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;color:var(--accent);letter-spacing:1px;flex-shrink:0;margin-top:2px;}
+.third-info{flex:1;min-width:0;}
+.team-name{font-size:16px;font-weight:700;line-height:1.2;margin-bottom:5px;color:var(--text);}
+.third-card.selected .team-name{color:var(--text);}
+.third-context{font-size:11px;color:var(--muted);line-height:1.3;}
+/* FIX 7: badges sempre in colonna */
+.ctx-teams{display:flex;flex-direction:column;gap:3px;margin-top:3px;}
+.ctx-badge{font-size:10px;padding:2px 6px;border-radius:3px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);display:block;}
+.ctx-badge.q{border-color:rgba(245,197,24,.3);color:var(--accent);}
+.check-icon{width:20px;height:20px;border-radius:5px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;transition:all .15s;margin-top:2px;}
+.third-card.selected .check-icon{background:var(--green);border-color:var(--green);color:#000;}
+/* FIX 5: tasto INVIA grande e prominente */
+.btn-send{background:linear-gradient(135deg,#22c55e,#16a34a);color:#000;font-weight:700;font-size:18px !important;padding:18px 36px !important;border-radius:12px !important;letter-spacing:1px;box-shadow:0 4px 20px rgba(34,197,94,.35);}
+.btn-send:hover{background:linear-gradient(135deg,#4ade80,#22c55e);transform:translateY(-2px);box-shadow:0 6px 28px rgba(34,197,94,.5);}
+.btn-send:disabled{opacity:.6;transform:none;box-shadow:none;}
+.btn-share{background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;font-weight:700;}
+.btn-share:hover{background:linear-gradient(135deg,#60a5fa,#3b82f6);transform:translateY(-1px);}
+/* FIX 5: send-box layout centrato su mobile */
+.send-box{background:linear-gradient(135deg,rgba(34,197,94,.1),rgba(34,197,94,.03));border:2px solid rgba(34,197,94,.4);border-radius:var(--radius);padding:24px;margin-top:20px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;}
+.send-box-text h4{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;letter-spacing:.5px;color:var(--green);margin-bottom:4px;}
+.send-box-text p{font-size:13px;color:var(--muted);}
+.share-box{background:linear-gradient(135deg,rgba(59,130,246,.08),rgba(59,130,246,.02));border:1px solid rgba(59,130,246,.3);border-radius:var(--radius);padding:20px 24px;margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.share-box-text h4{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:17px;letter-spacing:.5px;color:#60a5fa;margin-bottom:3px;}
+.share-box-text p{font-size:12px;color:var(--muted);}
+.card-preview-label{text-align:center;font-size:12px;color:var(--muted);margin:20px 0 10px;}
+.thirds-counter{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--muted);margin-bottom:14px;}
+.thirds-counter em{color:var(--accent);font-style:normal;font-size:22px;}
+.bracket-round{margin-bottom:32px;}
+.round-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.round-title::before{content:'';display:inline-block;width:3px;height:13px;background:var(--accent2);border-radius:2px;}
+.matches-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:9px;}
+.match-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.match-header{background:var(--surface2);padding:5px 10px;font-size:11px;color:var(--muted);letter-spacing:.4px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;}
+.match-team{display:flex;align-items:center;padding:9px 11px;gap:8px;cursor:pointer;border:none;background:transparent;color:var(--text);width:100%;text-align:left;font-family:'Barlow',sans-serif;font-size:13px;font-weight:500;transition:background .12s;}
+.match-team:hover:not(:disabled){background:rgba(245,197,24,.07);}
+.match-team:disabled{cursor:default;}
+.match-team.winner{background:rgba(34,197,94,.1);}
+.match-team.winner .tbadge{background:var(--green);color:#000;}
+.match-team.loser{opacity:.38;}
+.match-team.tbd-team{color:var(--muted);font-style:italic;}
+/* FIX 8: tbadge mostra emoji bandiera invece di iniziali */
+.tbadge{width:26px;height:26px;border-radius:4px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.match-vs{display:flex;align-items:center;justify-content:center;height:18px;font-size:10px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:600;letter-spacing:1px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.campione-box{background:linear-gradient(135deg,rgba(245,197,24,.12),rgba(245,197,24,.02));border:1px solid rgba(245,197,24,.4);border-radius:var(--radius);padding:28px;text-align:center;margin-top:28px;}
+.campione-box h3{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:24px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.campione-name{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:44px;color:var(--text);line-height:1;}
+/* FIX 9: scheda marcatori */
+.marcatori-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:20px;}
+.marcatori-head{background:var(--surface2);padding:12px 16px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;letter-spacing:1px;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:8px;}
+.marcatori-body{padding:20px;}
+.marc-row{margin-bottom:22px;}
+.marc-label{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px;}
+.marc-label em{font-style:normal;font-size:20px;margin-right:4px;}
+.marc-fields{display:flex;gap:10px;flex-wrap:wrap;}
+.marc-input{background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-family:'Barlow',sans-serif;font-size:15px;color:var(--text);flex:1;min-width:160px;transition:border-color .2s;}
+.marc-input:focus{outline:none;border-color:var(--accent);}
+.marc-input::placeholder{color:var(--muted);}
+.marc-select{background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-family:'Barlow',sans-serif;font-size:15px;color:var(--text);flex:1;min-width:140px;cursor:pointer;transition:border-color .2s;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a8ba0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
+.marc-select:focus{outline:none;border-color:var(--accent);}
+.marc-select option{background:var(--surface2);}
+.marc-preview{margin-top:10px;padding:10px 14px;background:rgba(245,197,24,.05);border:1px solid rgba(245,197,24,.2);border-radius:8px;font-size:14px;color:var(--text);display:none;}
+.marc-preview span{color:var(--accent);font-weight:600;}
+.recap-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.recap-head{background:var(--surface2);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;}
+.recap-head h3{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:17px;text-transform:uppercase;letter-spacing:1px;}
+.recap-body{padding:18px;}
+.recap-player{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:34px;color:var(--accent);margin-bottom:18px;}
+.rlabel{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:600;margin-bottom:8px;margin-top:14px;}
+.rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;}
+.rg{background:var(--surface2);border-radius:6px;padding:9px 11px;}
+.rg-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:5px;}
+.rg ol{padding-left:16px;}
+.rg li{font-size:12px;padding:1px 0;}
+.badges{display:flex;flex-wrap:wrap;gap:5px;}
+.badge{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:3px 7px;font-size:12px;}
+.badge.gold{border-color:rgba(245,197,24,.5);color:var(--accent);}
+.btn-row{display:flex;gap:10px;justify-content:flex-end;margin-top:28px;}
+.btn{padding:11px 26px;border-radius:var(--radius);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border:none;transition:all .2s;}
+.btn-primary{background:var(--accent);color:#000;}
+.btn-primary:hover{background:#ffd700;transform:translateY(-1px);}
+.btn-primary:disabled{background:var(--border);color:var(--muted);cursor:not-allowed;transform:none;}
+.btn-secondary{background:transparent;color:var(--muted);border:1px solid var(--border);}
+.btn-secondary:hover{color:var(--text);border-color:var(--text);}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--green);color:#000;padding:11px 18px;border-radius:var(--radius);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;z-index:999;opacity:0;transform:translateY(8px);transition:all .3s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--surface);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Mondo<span>Fello</span> 26<small>Pronostici Mondiali</small></div>
+  <div class="progress-wrap">
+    <div class="progress-label"><span id="ptxt">Inizia</span><span id="ppct">0%</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="pfill"></div></div>
+  </div>
+</header>
+<nav class="steps-nav">
+  <button class="step-tab active" data-step="0">👤 Nome</button>
+  <button class="step-tab" data-step="1">🏟 Gironi A–F</button>
+  <button class="step-tab" data-step="2">🏟 Gironi G–L</button>
+  <button class="step-tab" data-step="3">3️⃣ Migliori Terze</button>
+  <button class="step-tab" data-step="4">⚔️ Knockout</button>
+  <button class="step-tab" data-step="5">⚽ Marcatori</button>
+  <button class="step-tab" data-step="6">📋 Riepilogo</button>
+</nav>
+<main>
+  <!-- STEP 0: NOME -->
+  <div class="step-panel active" id="step-0">
+    <div class="hero-wrap">
+      <h1>Mondo<span>Fello</span><br>2026</h1>
+      <p>Inserisci il tuo nome per iniziare</p>
+      <input class="name-input" type="text" id="pname" placeholder="Il tuo nome" maxlength="30" autocomplete="off">
+      <div class="btn-row" style="justify-content:center;margin-top:20px;">
+        <button class="btn btn-primary" onclick="goStep(1)">Inizia →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 1: GIRONI A-F -->
+  <div class="step-panel" id="step-1">
+    <div class="section-title">🏟 Gironi A – F</div>
+    <p class="section-hint">Tieni premuto e trascina per impostare la classifica finale prevista (1° → 4°). 🥇 1° e 🥈 2° si qualificano direttamente. 🟠 3° può qualificarsi come miglior terza.</p>
+    <div class="gironi-grid" id="gaf"></div>
+    <div class="btn-row"><button class="btn btn-secondary" onclick="goStep(0)">← Indietro</button><button class="btn btn-primary" onclick="goStep(2)">Gironi G–L →</button></div>
+  </div>
+
+  <!-- STEP 2: GIRONI G-L -->
+  <div class="step-panel" id="step-2">
+    <div class="section-title">🏟 Gironi G – L</div>
+    <p class="section-hint">Tieni premuto e trascina per impostare la classifica finale prevista (1° → 4°).</p>
+    <div class="gironi-grid" id="ggl"></div>
+    <div class="btn-row"><button class="btn btn-secondary" onclick="goStep(1)">← Indietro</button><button class="btn btn-primary" onclick="goStep(3)">Migliori Terze →</button></div>
+  </div>
+
+  <!-- STEP 3: MIGLIORI TERZE -->
+  <div class="step-panel" id="step-3">
+    <div class="section-title">3️⃣ Le 8 Migliori Terze</div>
+    <p class="section-hint">8 dei 12 gironi manderanno la loro terza classificata ai sedicesimi. Seleziona le 8 terze che pensi passeranno il turno. Devi selezionarne esattamente 8.</p>
+    <div class="thirds-counter">Selezionate: <em id="tcnt">0</em> / 8</div>
+    <div class="thirds-grid" id="tgrid"></div>
+    <div class="btn-row"><button class="btn btn-secondary" onclick="goStep(2)">← Indietro</button><button class="btn btn-primary" id="btn-ko" onclick="goStep(4)" disabled>Vai al Tabellone →</button></div>
+  </div>
+
+  <!-- STEP 4: KNOCKOUT -->
+  <div class="step-panel" id="step-4">
+    <div class="section-title">⚔️ Tabellone Knockout</div>
+    <p class="section-hint">Clicca la squadra che pensi vincerà ogni scontro. Il turno successivo si sblocca man mano.</p>
+    <div id="bracket"></div>
+    <div class="campione-box" id="cbox" style="display:none">
+      <h3>🏆 Campione del Mondo 2026</h3>
+      <div class="campione-name" id="cname"></div>
+    </div>
+    <div class="btn-row"><button class="btn btn-secondary" onclick="goStep(3)">← Indietro</button><button class="btn btn-primary" id="btn-marc" onclick="goStep(5)" disabled>Marcatori →</button></div>
+  </div>
+
+  <!-- STEP 5: MARCATORI (NUOVO) -->
+  <div class="step-panel" id="step-5">
+    <div class="section-title">⚽ Marcatori del Torneo</div>
+    <p class="section-hint">Chi pensi che sarà il capocannoniere e il miglior assistman del Mondiale 2026? Seleziona prima la squadra, poi scegli il giocatore dalla rosa ufficiale.</p>
+
+    <div class="marcatori-box">
+      <div class="marcatori-head">🥇 Capocannoniere</div>
+      <div class="marcatori-body">
+        <div class="marc-row">
+          <div class="marc-label"><em>🏳️</em>Squadra</div>
+          <div class="marc-fields">
+            <select class="marc-select" id="capocannoniere-squadra" onchange="onSquadraChange('capocannoniere')">
+              <option value="">— Seleziona la squadra —</option>
+            </select>
+            <select class="marc-select" id="capocannoniere-giocatore" onchange="updateMarcatorePreview('capocannoniere')" disabled>
+              <option value="">— Prima scegli la squadra —</option>
+            </select>
+          </div>
+          <div class="marc-preview" id="capocannoniere-preview">
+            <em>⚽</em> <span id="capocannoniere-preview-txt"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="marcatori-box">
+      <div class="marcatori-head">🎯 Miglior Assistman</div>
+      <div class="marcatori-body">
+        <div class="marc-row">
+          <div class="marc-label"><em>🏳️</em>Squadra</div>
+          <div class="marc-fields">
+            <select class="marc-select" id="assistman-squadra" onchange="onSquadraChange('assistman')">
+              <option value="">— Seleziona la squadra —</option>
+            </select>
+            <select class="marc-select" id="assistman-giocatore" onchange="updateMarcatorePreview('assistman')" disabled>
+              <option value="">— Prima scegli la squadra —</option>
+            </select>
+          </div>
+          <div class="marc-preview" id="assistman-preview">
+            <em>🎯</em> <span id="assistman-preview-txt"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row"><button class="btn btn-secondary" onclick="goStep(4)">← Indietro</button><button class="btn btn-primary" onclick="goStep(6)">Vedi Riepilogo →</button></div>
+  </div>
+
+  <!-- STEP 6: RIEPILOGO (era step-5) -->
+  <div class="step-panel" id="step-6">
+    <div class="section-title">📋 Il tuo Pronostico</div>
+    <div class="recap-card">
+      <div class="recap-head"><h3>Pronostico Completo</h3></div>
+      <div class="recap-body" id="rbody"></div>
+    </div>
+    <div class="send-box">
+      <div class="send-box-text">
+        <h4>✅ Pronostico pronto!</h4>
+        <p id="send-status">Clicca il pulsante per inviare il tuo pronostico. Nessun account richiesto.</p>
+      </div>
+      <button id="send-btn" class="btn btn-send" onclick="sendPronostico()">📨 CONFERMA E INVIA</button>
+    </div>
+    <div class="share-box">
+      <div class="share-box-text">
+        <h4>📲 Condividi il tuo pronostico</h4>
+        <p>Genera una card da mandare su WhatsApp, Instagram o dove vuoi.</p>
+      </div>
+      <button class="btn btn-share" onclick="generateCard()">🎨 Genera Card</button>
+    </div>
+    <div id="card-preview" style="display:none">
+      <div class="card-preview-label">Tieni premuto sull'immagine per salvarla, oppure clicca il bottone qui sotto</div>
+      <canvas id="share-canvas" style="width:100%;max-width:420px;border-radius:12px;display:block;margin:0 auto;box-shadow:0 8px 32px rgba(0,0,0,.5)"></canvas>
+      <div class="btn-row" style="justify-content:center;margin-top:14px">
+        <button id="dl-btn" class="btn btn-share" onclick="downloadCard()">⬇️ Scarica Immagine</button>
+      </div>
+    </div>
+    <div class="btn-row" style="justify-content:space-between">
+      <button class="btn btn-secondary" onclick="goStep(4)">← Modifica</button>
+      <button id="torna-dashboard-btn" class="btn btn-primary" onclick="tornaDashboard()" disabled style="opacity:.45;cursor:not-allowed">🔒 Prima conferma e invia</button>
+    </div>
+  </div>
+</main>
+<div class="toast" id="toast">✓ Copiato!</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// CONFIGURAZIONE
+// ══════════════════════════════════════════════════════════════
+// DEADLINE invio pronostici. Dopo questa data/ora il form è bloccato.
+// Formato: anno, mese(0-11!), giorno, ora, minuti
+// Esempio: 11 giugno 2026 ore 17:30 (mezz'ora prima della prima partita)
+//   → new Date(2026, 5, 11, 17, 30)   [mese 5 = giugno]
+// Metti una data nel passato per testare il blocco, o molto futura per disattivarlo.
+const DEADLINE = new Date(2026, 5, 11, 17, 30); // 11 giu 2026, 17:30
+
+// Endpoint Google Sheet + lista nomi già usati (anti-duplicato)
+const SHEET_URL='https://script.google.com/macros/s/AKfycbySa3HHHcLE889SHvTcvyCJSdwm2QNhraSPK8UWNNg2tAmN4NffspED9dG5KdONbVJCiQ/exec';
+let usedNames=new Set();
+
+// ══════════════════════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════════════════════
+const GRP = {
+  A:{t:["Messico","Corea del Sud","Sudafrica","Rep. Ceca"]},
+  B:{t:["Canada","Bosnia Erz.","Qatar","Svizzera"]},
+  C:{t:["Brasile","Marocco","Haiti","Scozia"]},
+  D:{t:["USA","Paraguay","Australia","Turchia"]},
+  E:{t:["Germania","Costa d'Avorio","Ecuador","Curaçao"]},
+  F:{t:["Olanda","Giappone","Svezia","Tunisia"]},
+  G:{t:["Belgio","Egitto","Iran","Nuova Zelanda"]},
+  H:{t:["Spagna","Capo Verde","Arabia Saudita","Uruguay"]},
+  I:{t:["Francia","Senegal","Iraq","Norvegia"]},
+  J:{t:["Argentina","Algeria","Austria","Giordania"]},
+  K:{t:["Portogallo","RD Congo","Uzbekistan","Colombia"]},
+  L:{t:["Inghilterra","Croazia","Ghana","Panama"]}
+};
+
+// ══════════════════════════════════════════════════════════════
+// FLAG EMOJI MAP
+// ══════════════════════════════════════════════════════════════
+const FLAGS={
+  "Messico":"🇲🇽","Corea del Sud":"🇰🇷","Sudafrica":"🇿🇦","Rep. Ceca":"🇨🇿",
+  "Canada":"🇨🇦","Bosnia Erz.":"🇧🇦","Qatar":"🇶🇦","Svizzera":"🇨🇭",
+  "Brasile":"🇧🇷","Marocco":"🇲🇦","Haiti":"🇭🇹","Scozia":"🏴󠁧󠁢󠁳󠁣󠁴󠁿",
+  "USA":"🇺🇸","Paraguay":"🇵🇾","Australia":"🇦🇺","Turchia":"🇹🇷",
+  "Germania":"🇩🇪","Costa d'Avorio":"🇨🇮","Ecuador":"🇪🇨","Curaçao":"🇨🇼",
+  "Olanda":"🇳🇱","Giappone":"🇯🇵","Svezia":"🇸🇪","Tunisia":"🇹🇳",
+  "Belgio":"🇧🇪","Egitto":"🇪🇬","Iran":"🇮🇷","Nuova Zelanda":"🇳🇿",
+  "Spagna":"🇪🇸","Capo Verde":"🇨🇻","Arabia Saudita":"🇸🇦","Uruguay":"🇺🇾",
+  "Francia":"🇫🇷","Senegal":"🇸🇳","Iraq":"🇮🇶","Norvegia":"🇳🇴",
+  "Argentina":"🇦🇷","Algeria":"🇩🇿","Austria":"🇦🇹","Giordania":"🇯🇴",
+  "Portogallo":"🇵🇹","RD Congo":"🇨🇩","Uzbekistan":"🇺🇿","Colombia":"🇨🇴",
+  "Inghilterra":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Croazia":"🇭🇷","Ghana":"🇬🇭","Panama":"🇵🇦",
+  "TBD":"❓"
+};
+function flag(t){return FLAGS[t]||'🏳';}
+
+// Tutte le 48 squadre ordinate per popolare i dropdown marcatori
+const ALL_TEAMS = Object.values(GRP).flatMap(g=>g.t).sort();
+
+// Database giocatori 2026 FIFA World Cup - esclusi i portieri (GK)
+// Chiavi: nomi squadre in italiano come definiti in GRP
+const PLAYERS = {
+  "Messico":["Jesús Gallardo","César Montes","Jorge Sánchez","Johan Vásquez","Israel Reyes","Mateo Chávez","Edson Álvarez","Orbelín Pineda","Roberto Alvarado","Luis Romo","Luis Chávez","Érik Lira","Gilberto Mora","Brian Gutiérrez","Obed Vargas","Álvaro Fidalgo","Raúl Jiménez","Alexis Vega","Santiago Giménez","César Huerta","Julián Quiñones","Guillermo Martínez","Armando González"],
+  "Corea del Sud":["Kim Min-jae","Kim Moon-hwan","Seol Young-woo","Lee Tae-seok","Park Jin-seob","Kim Tae-hyeon","Lee Han-beom","Jens Castrop","Lee Ki-hyuk","Cho Wi-je","Lee Jae-sung","Hwang Hee-chan","Hwang In-beom","Lee Kang-in","Paik Seung-ho","Kim Jin-gyu","Lee Dong-gyeong","Bae Jun-ho","Eom Ji-sung","Yang Hyun-jun","Son Heung-min","Cho Gue-sung","Oh Hyeon-gyu"],
+  "Sudafrica":["Aubrey Modiba","Khuliso Mudau","Nkosinathi Sibisi","Mbekezeli Mbokazi","Ime Okon","Samukele Kabini","Khulumani Ndamane","Thabang Matuludi","Kamogelo Sebelebele","Bradley Cross","Olwethu Makhanya","Teboho Mokoena","Sphephelo Sithole","Thalente Mbatha","Jayden Adams","Themba Zwane","Lyle Foster","Evidence Makgopa","Oswin Appollis","Iqraam Rayners","Relebohile Mofokeng","Thapelo Maseko","Tshepang Moremi"],
+  "Rep. Ceca":["Vladimír Coufal","Tomáš Holeš","Ladislav Krejčí","David Zima","Jaroslav Zelený","David Jurásek","David Douděra","Robin Hranáč","Štěpán Chaloupek","Tomáš Souček","Vladimír Darida","Lukáš Provod","Michal Sadílek","Pavel Šulc","Lukáš Červ","Hugo Sochůrek","Alexandr Sojka","Denis Višinský","Patrik Schick","Adam Hložek","Jan Kuchta","Mojmír Chytil","Tomáš Chorý"],
+  "Canada":["Alistair Johnston","Luc de Fougerolles","Alfie Jones","Joel Waterman","Mathieu Choinière","Stephen Eustáquio","Ismaël Koné","Cyle Larin","Jonathan David","Liam Millar","Tani Oluwaseyi","Derek Cornelius","Jacob Shaffelburg","Moïse Bombito","Tajon Buchanan","Alphonso Davies","Ali Ahmed","Jonathan Osorio","Richie Laryea","Niko Sigur","Promise David","Nathan Saliba"],
+  "Bosnia Erz.":["Sead Kolašinac","Dennis Hadžikadunić","Amar Dedić","Nikola Katić","Tarik Muharemović","Nihad Mujakić","Stjepan Radeljić","Nidal Čelik","Amir Hadžiahmetović","Benjamin Tahirović","Armin Gigović","Dženis Burnić","Ivan Bašić","Esmir Bajraktarević","Amar Memić","Ivan Šunjić","Kerim Alajbegović","Ermin Mahmić","Edin Džeko","Ermedin Demirović","Samed Baždar","Haris Tabaković","Jovo Lukić"],
+  "Qatar":["Pedro Miguel","Lucas Mendes","Issa Laye","Jassem Gaber","Abdulaziz Hatem","Ahmed Alaaeldin","Edmilson Junior","Mohammed Muntari","Hassan Al-Haydos","Akram Afif","Karim Boudiaf","Ayoub Al-Oui","Homam Ahmed","Yusuf Abdurisag","Boualem Khoukhi","Ahmed Al-Ganehi","Sultan Al-Brake","Almoez Ali","Ahmed Fathy","Assim Madibo","Tahsin Jamshid","Al-Hashmi Al-Hussain","Mohamed Al-Mannai"],
+  "Svizzera":["Miro Muheim","Silvan Widmer","Nico Elvedi","Manuel Akanji","Denis Zakaria","Breel Embolo","Remo Freuler","Johan Manzambi","Granit Xhaka","Dan Ndoye","Ricardo Rodriguez","Ardon Jashari","Djibril Sow","Christian Fassnacht","Rubén Vargas","Eray Cömert","Noah Okafor","Michel Aebischer","Fabian Rieder","Zeki Amdouni","Aurèle Amenda","Luca Jaquez","Cedric Itten"],
+  "Brasile":["Wesley","Gabriel Magalhães","Marquinhos","Casemiro","Alex Sandro","Vinícius Júnior","Bruno Guimarães","Matheus Cunha","Neymar","Raphinha","Danilo Luiz","Bremer","Léo Pereira","Douglas Santos","Fabinho","Danilo Santos","Endrick","Lucas Paquetá","Luiz Henrique","Gabriel Martinelli","Roger Ibañez","Igor Thiago","Rayan"],
+  "Marocco":["Achraf Hakimi","Nayef Aguerd","Noussair Mazraoui","Youssef Belammari","Anass Salah-Eddine","Chadi Riad","Issa Diop","Zakaria El Ouahdi","Redouane Halhal","Sofyan Amrabat","Azzedine Ounahi","Bilal El Khannouss","Ismael Saibari","Neil El Aynaoui","Samir El Mourabet","Ayyoub Bouaddi","Ayoub El Kaabi","Soufiane Rahimi","Abde Ezzalzouli","Brahim Díaz","Chemsdine Talbi","Gessime Yassine","Ayoube Amaimouni"],
+  "Haiti":["Ricardo Adé","Carlens Arcus","Martin Expérience","Jean-Kévin Duverne","Duke Lacroix","Wilguens Paugain","Hannes Delcroix","Keeto Thermoncy","Leverton Pierre","Danley Jean Jacques","Carl Sainté","Jean-Ricner Bellegarde","Woodensky Pierre","Dominique Simon","Duckens Nazon","Frantzdy Pierrot","Derrick Etienne Jr.","Louicius Deedson","Ruben Providence","Josué Casimir","Yassin Fortuné","Wilson Isidor","Lenny Joseph"],
+  "Scozia":["Andy Robertson","Grant Hanley","Kieran Tierney","Scott McKenna","Jack Hendry","Nathan Patterson","Anthony Ralston","John Souttar","Aaron Hickey","Dominic Hyam","John McGinn","Scott McTominay","Ryan Christie","Kenny McLean","Lewis Ferguson","Ben Gannon-Doak","Findlay Curtis","Tyler Fletcher","Lyndon Dykes","Ché Adams","Lawrence Shankland","George Hirst","Ross Stewart"],
+  "USA":["Sergiño Dest","Chris Richards","Tyler Adams","Antonee Robinson","Auston Trusty","Giovanni Reyna","Weston McKennie","Ricardo Pepi","Christian Pulisic","Brenden Aaronson","Miles Robinson","Tim Ream","Sebastian Berhalter","Cristian Roldan","Alex Freeman","Malik Tillman","Maximilian Arfsten","Haji Wright","Folarin Balogun","Timothy Weah","Mark McKenzie","Joe Scally","Alejandro Zendejas"],
+  "Paraguay":["Gustavo Gómez","Júnior Alonso","Fabián Balbuena","Omar Alderete","Juan José Cáceres","Gustavo Velázquez","José Canale","Alexandro Maidana","Miguel Almirón","Kaku","Andrés Cubas","Ramón Sosa","Diego Gómez","Damián Bobadilla","Braian Ojeda","Matías Galarza","Maurício","Antonio Sanabria","Julio Enciso","Gabriel Ávalos","Álex Arce","Isidro Pitta","Gustavo Caballero"],
+  "Australia":["Miloš Degenek","Alessandro Circati","Jacob Italiano","Jordan Bos","Jason Geria","Mathew Leckie","Connor Metcalfe","Mohamed Touré","Ajdin Hrustic","Awer Mabil","Aiden O'Neill","Cammy Devlin","Kai Trewin","Aziz Behich","Nestory Irankunda","Harry Souttar","Cristian Volpato","Cameron Burgess","Jackson Irvine","Nishan Velupillay","Paul Okon-Engstler","Lucas Herrington","Tete Yengi"],
+  "Turchia":["Merih Demiral","Zeki Çelik","Çağlar Söyüncü","Mert Müldür","Ferdi Kadıoğlu","Ozan Kabak","Abdülkerim Bardakcı","Eren Elmalı","Samet Akaydin","Yusuf Akçiçek","Mustafa Eskihellaç","Ahmetcan Kaplan","Hakan Çalhanoğlu","Kaan Ayhan","Orkun Kökçü","İsmail Yüksek","Salih Özcan","Atakan Karazor","Demir Ege Tıknaz","Kerem Aktürkoğlu","İrfan Can Kahveci","Barış Alper Yılmaz","Arda Güler","Kenan Yıldız","Yunus Akgün","Oğuz Aydın","Deniz Gül","Yusuf Sarı","Can Uzun","Aral Şimşir"],
+  "Germania":["Antonio Rüdiger","Waldemar Anton","Jonathan Tah","Aleksandar Pavlović","Joshua Kimmich","Kai Havertz","Leon Goretzka","Jamie Leweling","Jamal Musiala","Nick Woltemade","Pascal Groß","Maximilian Beier","Nico Schlotterbeck","Angelo Stiller","Florian Wirtz","Nathaniel Brown","Leroy Sané","Nadiem Amiri","David Raum","Felix Nmecha","Malick Thiaw","Lennart Karl","Deniz Undav"],
+  "Costa d'Avorio":["Ghislain Konan","Odilon Kossounou","Wilfried Singo","Evan Ndicka","Emmanuel Agbadou","Guéla Doué","Ousmane Diomande","Christopher Opéri","Franck Kessié","Jean Michaël Seri","Ibrahim Sangaré","Seko Fofana","Christ Inao Oulaï","Parfait Guiagon","Nicolas Pépé","Oumar Diakité","Simon Adingra","Evann Guessand","Amad Diallo","Yan Diomande","Bazoumana Touré","Elye Wahi","Ange-Yoan Bonny"],
+  "Ecuador":["Félix Torres","Piero Hincapié","Joel Ordóñez","Jordy Alcívar","Willian Pacho","Pervis Estupiñán","Denil Castillo","John Yeboah","Kendry Páez","Kevin Rodríguez","Enner Valencia","Alan Minda","Pedro Vite","Anthony Valencia","Ángelo Preciado","Jordy Caicedo","Gonzalo Plata","Nilson Angulo","Alan Franco","Moisés Caicedo","Yaimar Medina","Jackson Porozo","Jeremy Arévalo"],
+  "Curaçao":["Shurandy Sambo","Juriën Gaari","Roshon van Eijma","Sherel Floranus","Godfried Roemeratoe","Juninho Bacuna","Livano Comenencia","Jürgen Locadia","Leandro Bacuna","Jeremy Antonisse","Sontje Hansen","Tyrese Noslin","Kenji Gorré","Ar'jany Martha","Jearl Margaritha","Brandley Kuwas","Armando Obispo","Gervane Kastaneer","Joshua Brenet","Tahith Chong","Kevin Felida","Riechedly Bazoer","Deveron Fonville"],
+  "Olanda":["Virgil van Dijk","Denzel Dumfries","Nathan Aké","Jurriën Timber","Micky van de Ven","Mats Wieffer","Jan Paul van Hecke","Jorrel Hato","Frenkie de Jong","Marten de Roon","Tijjani Reijnders","Teun Koopmeiners","Ryan Gravenberch","Justin Kluivert","Quinten Timber","Guus Til","Memphis Depay","Wout Weghorst","Donyell Malen","Cody Gakpo","Noa Lang","Brian Brobbey","Crysencio Summerville"],
+  "Giappone":["Yukinari Sugawara","Shōgo Taniguchi","Kō Itakura","Yūto Nagatomo","Wataru Endo","Ao Tanaka","Takefusa Kubo","Keisuke Gotō","Ritsu Dōan","Daizen Maeda","Keito Nakamura","Junya Itō","Daichi Kamada","Tsuyoshi Watanabe","Yuito Suzuki","Ayase Ueda","Kōki Ogawa","Ayumu Seko","Hiroki Itō","Takehiro Tomiyasu","Kaishū Sano","Junnosuke Suzuki","Kento Shiogai"],
+  "Svezia":["Gustaf Lagerbielke","Victor Lindelöf","Isak Hien","Gabriel Gudmundsson","Herman Johansson","Lucas Bergvall","Daniel Svensson","Alexander Isak","Benjamin Nygren","Anthony Elanga","Ken Sema","Hjalmar Ekdal","Carl Starfelt","Jesper Karlström","Viktor Gyökeres","Yasin Ayari","Mattias Svanberg","Eric Smith","Alexander Bernhardsson","Besfort Zeneli","Elliot Stroud","Gustaf Nilsson","Taha Ali"],
+  "Tunisia":["Montassar Talbi","Dylan Bronn","Ali Abdi","Yan Valery","Mohamed Amine Ben Hamida","Moutaz Neffati","Omar Rekik","Adem Arous","Raed Chikhaoui","Ellyes Skhiri","Hannibal Mejbri","Anis Ben Slimane","Mortadha Ben Ouanes","Ismaël Gharbi","Hadj Mahmoud","Rani Khedira","Elias Achouri","Firas Chaouat","Hazem Mastouri","Elias Saad","Sebastian Tounekti","Khalil Ayari","Rayan Elloumi"],
+  "Belgio":["Thomas Meunier","Timothy Castagne","Arthur Theate","Zeno Debast","Maxim De Cuyper","Brandon Mechele","Koni De Winter","Joaquin Seys","Nathan Ngoy","Axel Witsel","Kevin De Bruyne","Youri Tielemans","Hans Vanaken","Amadou Onana","Nicolas Raskin","Romelu Lukaku","Leandro Trossard","Jérémy Doku","Dodi Lukébakio","Charles De Ketelaere","Alexis Saelemaekers","Diego Moreira","Matias Fernandez-Pardo"],
+  "Egitto":["Hamdy Fathy","Ramy Rabia","Mohamed Hany","Ahmed Fatouh","Mohamed Abdelmonem","Yasser Ibrahim","Hossam Abdelmaguid","Karim Hafez","Tarek Alaa","Marwan Attia","Emam Ashour","Mohanad Lasheen","Mahmoud Saber","Nabil Emad","Mostafa Ziko","Mohamed Salah","Trézéguet","Zizo","Omar Marmoush","Ibrahim Adel","Haissem Hassan","Hamza Abdelkarim"],
+  "Iran":["Ehsan Hajsafi","Milad Mohammadi","Ramin Rezaeian","Hossein Kanaanizadegan","Shojae Khalilzadeh","Saleh Hardani","Ali Nemati","Danial Eiri","Alireza Jahanbakhsh","Saeid Ezatolahi","Saman Ghoddos","Mehdi Torabi","Rouzbeh Cheshmi","Mohammad Mohebi","Mehdi Ghayedi","Mohammad Ghorbani","Aria Yousefi","Amirmohammad Razzaghinia","Mehdi Taremi","Shahriyar Moghanlou","Amirhossein Hosseinzadeh","Ali Alipour","Dennis Eckert"],
+  "Nuova Zelanda":["Tim Payne","Francis de Vries","Tyler Bindon","Michael Boxall","Joe Bell","Matthew Garbett","Marko Stamenić","Chris Wood","Sarpreet Singh","Elijah Just","Liberato Cacace","Alex Rufer","Nando Pijnaker","Finn Surman","Kosta Barbarouses","Ben Waine","Ben Old","Callum McCowatt","Jesse Randall","Ryan Thomas","Callan Elliot","Lachlan Bayliss","Tommy Smith"],
+  "Spagna":["Marc Pubill","Álex Grimaldo","Eric García","Marcos Llorente","Mikel Merino","Ferran Torres","Fabián Ruiz","Gavi","Dani Olmo","Yéremy Pino","Pedro Porro","Aymeric Laporte","Álex Baena","Rodri","Nico Williams","Martín Zubimendi","Lamine Yamal","Pedri","Mikel Oyarzabal","Pau Cubarsí","Marc Cucurella","Víctor Muñoz","Borja Iglesias"],
+  "Capo Verde":["Stopira","Roberto Lopes","João Paulo","Diney","Logan Costa","Steven Moreira","Wagner Pina","Sidny Lopes Cabral","Kelvin Pires","Jamiro Monteiro","Kevin Pina","Deroy Duarte","Telmo Arcanjo","Laros Duarte","Yannick Semedo","Ryan Mendes","Garry Rodrigues","Willy Semedo","Jovane Cabral","Gilson Benchimol","Dailon Livramento","Hélio Varela","Nuno da Costa"],
+  "Arabia Saudita":["Saud Abdulhamid","Hassan Al-Tambakti","Abdulelah Al-Amri","Nawaf Boushal","Ali Lajami","Ali Majrashi","Hassan Kadesh","Moteb Al-Harbi","Jehad Thakri","Mohammed Abu Al-Shamat","Salem Al-Dawsari","Mohamed Kanno","Nasser Al-Dawsari","Abdullah Al-Khaibari","Musab Al-Juwayr","Ayman Yahya","Ziyad Al-Johani","Sultan Mandash","Alaa Al-Hejji","Firas Al-Buraikan","Saleh Al-Shehri","Abdullah Al-Hamdan","Khalid Al-Ghannam"],
+  "Uruguay":["José María Giménez","Matías Viña","Mathías Olivera","Guillermo Varela","Ronald Araújo","Sebastián Cáceres","Joaquín Piquerez","Santiago Bueno","Rodrigo Bentancur","Federico Valverde","Giorgian de Arrascaeta","Facundo Pellistri","Manuel Ugarte","Nicolás de la Cruz","Brian Rodríguez","Maximiliano Araújo","Agustín Canobbio","Emiliano Martínez","Rodrigo Zalazar","Juan Manuel Sanabria","Darwin Núñez","Federico Viñas","Rodrigo Aguirre"],
+  "Francia":["Malo Gusto","Lucas Digne","Dayot Upamecano","Jules Koundé","Manu Koné","Ousmane Dembélé","Aurélien Tchouaméni","Marcus Thuram","Kylian Mbappé","Michael Olise","Bradley Barcola","N'Golo Kanté","Adrien Rabiot","Ibrahima Konaté","William Saliba","Warren Zaïre-Emery","Théo Hernandez","Désiré Doué","Lucas Hernandez","Jean-Philippe Mateta","Rayan Cherki","Maghnes Akliouche","Maxence Lacroix"],
+  "Senegal":["Kalidou Koulibaly","Krépin Diatta","Moussa Niakhaté","Ismail Jakobs","Abdoulaye Seck","El Hadji Malick Diouf","Mamadou Sarr","Antoine Mendy","Ilay Camara","Moustapha Mbow","Idrissa Gueye","Pape Gueye","Pape Matar Sarr","Lamine Camara","Pathé Ciss","Habib Diarra","Bara Sapoko Ndiaye","Sadio Mané","Ismaïla Sarr","Iliman Ndiaye","Nicolas Jackson","Bamba Dieng","Cherif Ndiaye","Ibrahim Mbaye","Assane Diao"],
+  "Iraq":["Rebin Sulaka","Manaf Younis","Merchas Doski","Zaid Tahseen","Frans Putros","Hussein Ali","Ahmed Yahya","Mustafa Saadoon","Akam Hashim","Ibrahim Bayesh","Amir Al-Ammari","Ali Jasim","Youssef Amyn","Zidane Iqbal","Marko Farji","Kevin Yakob","Aimar Sher","Zaid Ismail","Ahmed Qasem","Aymen Hussein","Mohanad Ali","Ali Al-Hamadi","Ali Yousif"],
+  "Norvegia":["Morten Thorsby","Kristoffer Ajer","Leo Østigård","David Møller Wolfe","Patrick Berg","Alexander Sørloth","Sander Berge","Erling Haaland","Martin Ødegaard","Jørgen Strand Larsen","Fredrik Aursnes","Fredrik André Bjørkan","Marcus Holmgren Pedersen","Torbjørn Heggem","Kristian Thorstvedt","Thelo Aasgaard","Antonio Nusa","Andreas Schjelderup","Oscar Bobb","Jens Petter Hauge","Sondre Langås","Henrik Falchener","Julian Ryerson"],
+  "Argentina":["Leonardo Balerdi","Nicolás Tagliafico","Gonzalo Montiel","Leandro Paredes","Lisandro Martínez","Rodrigo De Paul","Valentín Barco","Julián Alvarez","Lionel Messi","Giovani Lo Celso","Cristian Romero","Exequiel Palacios","Nicolás González","Thiago Almada","Giuliano Simeone","Nico Paz","Nicolás Otamendi","Alexis Mac Allister","José Manuel López","Lautaro Martínez","Enzo Fernández","Facundo Medina","Nahuel Molina"],
+  "Algeria":["Aïssa Mandi","Ramy Bensebaini","Mohamed Amine Tougai","Rayan Aït-Nouri","Jaouen Hadjam","Rafik Belghali","Zineddine Belaïd","Achref Abada","Samir Chergui","Nabil Bentaleb","Ramiz Zerrouki","Hicham Boudaoui","Farès Chaïbi","Houssem Aouar","Ibrahim Maza","Yacine Titraoui","Riyad Mahrez","Mohamed Amoura","Amine Gouiri","Anis Hadj Moussa","Adil Boulbina","Nadhir Benbouali","Farès Ghedjemis"],
+  "Austria":["David Affengruber","Kevin Danso","Xaver Schlager","Stefan Posch","Nicolas Seiwald","Marko Arnautović","David Alaba","Marcel Sabitzer","Florian Grillitsch","Michael Gregoritsch","Saša Kalajdžić","Philipp Lienhart","Phillipp Mwene","Carney Chukwuemeka","Romano Schmid","Christoph Baumgartner","Konrad Laimer","Patrick Wimmer","Alexander Prass","Marco Friedl","Paul Wanner","Michael Svoboda","Alessandro Schöpf"],
+  "Giordania":["Ihsan Haddad","Yazan Al-Arab","Abdallah Nasib","Saed Al-Rosan","Husam Abu Dahab","Mo Abualnadi","Salim Obaid","Anas Badawi","Rajaei Ayed","Noor Al-Rawabdeh","Ibrahim Sadeh","Mohammad Abu Hashish","Nizar Al-Rashdan","Mohannad Abu Taha","Amer Jamous","Mohammad Al-Dawoud","Yousef Qashi","Mohammad Taha","Musa Al-Taamari","Mahmoud Al-Mardi","Ali Olwan","Mohammad Abu Zrayq","Odeh Al-Fakhouri","Ibrahim Sabra","Ali Azaizeh"],
+  "Portogallo":["Rúben Dias","João Cancelo","Nélson Semedo","Nuno Mendes","Diogo Dalot","Gonçalo Inácio","Matheus Nunes","Renato Veiga","Tomás Araújo","Bernardo Silva","Bruno Fernandes","Rúben Neves","Vitinha","João Neves","Samú Costa","Cristiano Ronaldo","João Félix","Rafael Leão","Gonçalo Guedes","Gonçalo Ramos","Pedro Neto","Francisco Trincão","Francisco Conceição"],
+  "RD Congo":["Chancel Mbemba","Arthur Masuaku","Gédéon Kalulu","Joris Kayembe","Dylan Batubinsika","Axel Tuanzebe","Aaron Wan-Bissaka","Steve Kapuadi","Samuel Moutoussamy","Edo Kayembe","Charles Pickel","Gaël Kakuta","Noah Sadiki","Aaron Tshibola","Ngal'ayel Mukau","Brian Cipenga","Cédric Bakambu","Meschak Elia","Théo Bongonda","Fiston Mayele","Yoane Wissa","Nathanaël Mbuku","Simon Banza"],
+  "Uzbekistan":["Rustam Ashurmatov","Farrukh Sayfiev","Khojiakbar Alijonov","Sherzod Nasrullaev","Umar Eshmurodov","Abdukodir Khusanov","Abdulla Abdullaev","Bekhruz Karimov","Jakhongir Urozov","Avazbek Ulmasaliev","Otabek Shukurov","Odiljon Hamrobekov","Jamshid Iskanderov","Akmal Mozgovoy","Azizjon Ganiev","Jasurbek Jaloliddinov","Umarali Rakhmonaliev","Sherzod Esanov","Eldor Shomurodov","Igor Sergeev","Jaloliddin Masharipov","Oston Urunov","Dostonbek Khamdamov","Abbosbek Fayzullaev","Azizbek Amonov","Ruslanbek Jiyanov","Sherzod Temirov"],
+  "Colombia":["Davinson Sánchez","Santiago Arias","Yerry Mina","Daniel Muñoz","Johan Mojica","Jhon Lucumí","Deiver Machado","Willer Ditta","James Rodríguez","Jefferson Lerma","Juan Fernando Quintero","Jhon Arias","Richard Ríos","Kevin Castaño","Jorge Carrascal","Jaminton Campaz","Juan Portilla","Gustavo Puerta","Luis Díaz","Jhon Córdoba","Luis Suárez","Cucho Hernández","Andrés Gómez"],
+  "Inghilterra":["John Stones","Marc Guéhi","Reece James","Ezri Konsa","Dan Burn","Tino Livramento","Djed Spence","Nico O'Reilly","Jarell Quansah","Jordan Henderson","Declan Rice","Jude Bellingham","Morgan Rogers","Kobbie Mainoo","Elliot Anderson","Harry Kane","Marcus Rashford","Bukayo Saka","Ollie Watkins","Anthony Gordon","Eberechi Eze","Noni Madueke","Ivan Toney"],
+  "Croazia":["Joško Gvardiol","Duje Ćaleta-Car","Josip Šutalo","Josip Stanišić","Marin Pongračić","Martin Erlić","Luka Vušković","Luka Modrić","Mateo Kovačić","Mario Pašalić","Nikola Vlašić","Luka Sučić","Martin Baturina","Kristijan Jakić","Petar Sučić","Nikola Moro","Toni Fruk","Ivan Perišić","Andrej Kramarić","Ante Budimir","Marco Pašalić","Petar Musa","Igor Matanović"],
+  "Ghana":["Abdul Rahman Baba","Gideon Mensah","Alidu Seidu","Jerome Opoku","Jonas Adjetey","Abdul Mumin","Kojo Peprah Oppong","Derrick Luckassen","Marvin Senaya","Thomas Partey","Abdul Fatawu","Elisha Owusu","Caleb Yirenkyi","Kwasi Sibo","Augustine Boakye","Jordan Ayew","Antoine Semenyo","Kamaldeen Sulemana","Iñaki Williams","Ernest Nuamah","Christopher Bonsu Baah","Brandon Thomas-Asante","Prince Kwabena Adu"],
+  "Panama":["Eric Davis","Fidel Escobar","Michael Amir Murillo","Roderick Miller","Andrés Andrade","César Blackman","José Córdoba","Jiovany Ramos","Jorge Gutiérrez","Edgardo Fariña","Aníbal Godoy","Alberto Quintero","Yoel Bárcenas","Adalberto Carrasquilla","José Luis Rodríguez","Cristian Martínez","César Yanis","Carlos Harvey","Azarias Londoño","José Fajardo","Ismael Díaz","Cecilio Waterman","Tomás Rodríguez"]
+};
+
+
+// ══════════════════════════════════════════════════════════════
+// COMPLETE FIFA COMBO TABLE
+// ══════════════════════════════════════════════════════════════
+const COMBO = {
+"EFGHIJKL":["E","J","I","F","H","G","L","K"],
+"DFGHIJKL":["H","G","I","D","J","F","L","K"],
+"DEGHIJKL":["E","J","I","D","H","G","L","K"],
+"DEFHIJKL":["E","J","I","D","H","F","L","K"],
+"DEFGIJKL":["E","G","I","D","J","F","L","K"],
+"DEFGHJKL":["E","G","J","D","H","F","L","K"],
+"DEFGHIKL":["E","G","I","D","H","F","L","K"],
+"DEFGHIJL":["E","G","J","D","H","F","L","I"],
+"DEFGHIJK":["E","G","J","D","H","F","I","K"],
+"CFGHIJKL":["H","G","I","C","J","F","L","K"],
+"CEGHIJKL":["E","J","I","C","H","G","L","K"],
+"CEFHIJKL":["E","J","I","C","H","F","L","K"],
+"CEFGIJKL":["E","G","I","C","J","F","L","K"],
+"CEFGHJKL":["E","G","J","C","H","F","L","K"],
+"CEFGHIKL":["E","G","I","C","H","F","L","K"],
+"CEFGHIJL":["E","G","J","C","H","F","L","I"],
+"CEFGHIJK":["E","G","J","C","H","F","I","K"],
+"CDGHIJKL":["H","G","I","C","J","D","L","K"],
+"CDFHIJKL":["C","J","I","D","H","F","L","K"],
+"CDFGIJKL":["C","G","I","D","J","F","L","K"],
+"CDFGHJKL":["C","G","J","D","H","F","L","K"],
+"CDFGHIKL":["C","G","I","D","H","F","L","K"],
+"CDFGHIJL":["C","G","J","D","H","F","L","I"],
+"CDFGHIJK":["C","G","J","D","H","F","I","K"],
+"CDEHIJKL":["E","J","I","C","H","D","L","K"],
+"CDEGIJKL":["E","G","I","C","J","D","L","K"],
+"CDEGHIKL":["E","G","I","C","H","D","L","K"],
+"CDEGHIJL":["E","G","J","C","H","D","L","I"],
+"CDEGHIJK":["E","G","J","C","H","D","I","K"],
+"CDEFIJKL":["C","J","E","D","I","F","L","K"],
+"CDEFHJKL":["C","J","E","D","H","F","L","K"],
+"CDEFHIKL":["C","E","I","D","H","F","L","K"],
+"CDEFHIJL":["C","J","E","D","H","F","L","I"],
+"CDEFHIJK":["C","J","E","D","H","F","I","K"],
+"CDEFGJKL":["C","G","E","D","J","F","L","K"],
+"CDEFGIKL":["C","G","E","D","I","F","L","K"],
+"CDEFGIJL":["C","G","E","D","J","F","L","I"],
+"CDEFGIJK":["C","G","E","D","J","F","I","K"],
+"CDEFGHKL":["C","G","E","D","H","F","L","K"],
+"CDEFGHJL":["C","G","J","D","H","F","L","E"],
+"CDEFGHJK":["C","G","J","D","H","F","E","K"],
+"CDEFGHIL":["C","G","E","D","H","F","L","I"],
+"CDEFGHIK":["C","G","E","D","H","F","I","K"],
+"CDEFGHIJ":["C","G","J","D","H","F","E","I"],
+"BFGHIJKL":["H","J","B","F","I","G","L","K"],
+"BEGHIJKL":["E","J","I","B","H","G","L","K"],
+"BEFHIJKL":["E","J","B","F","I","H","L","K"],
+"BEFGIJKL":["E","J","B","F","I","G","L","K"],
+"BEFGHJKL":["E","J","B","F","H","G","L","K"],
+"BEFGHIKL":["E","G","B","F","I","H","L","K"],
+"BEFGHIJL":["E","J","B","F","H","G","L","I"],
+"BEFGHIJK":["E","J","B","F","H","G","I","K"],
+"BDGHIJKL":["H","J","B","D","I","G","L","K"],
+"BDFHIJKL":["H","J","B","F","I","D","L","K"],
+"BDFGIJKL":["E","J","B","F","I","G","L","K"],
+"BDFGHJKL":["H","G","B","D","J","F","L","K"],
+"BDFGHIKL":["H","G","B","D","I","F","L","K"],
+"BDFGHIJL":["H","G","B","D","J","F","L","I"],
+"BDFGHIJK":["H","G","B","D","J","F","I","K"],
+"BDEHIJKL":["E","J","I","B","H","D","L","K"],
+"BDEGIJKL":["E","G","I","B","J","D","L","K"],
+"BDEGHIKL":["E","G","I","B","H","D","L","K"],
+"BDEGHIJL":["E","G","J","B","H","D","L","I"],
+"BDEGHIJK":["E","G","J","B","H","D","I","K"],
+"BDEFIJKL":["B","J","E","D","I","F","L","K"],
+"BDEFHJKL":["B","J","E","D","H","F","L","K"],
+"BDEFHIKL":["B","E","I","D","H","F","L","K"],
+"BDEFHIJL":["B","J","E","D","H","F","L","I"],
+"BDEFHIJK":["B","J","E","D","H","F","I","K"],
+"BDEFGJKL":["B","G","E","D","J","F","L","K"],
+"BDEFGIKL":["B","G","E","D","I","F","L","K"],
+"BDEFGIJL":["B","G","E","D","J","F","L","I"],
+"BDEFGIJK":["B","G","E","D","J","F","I","K"],
+"BDEFGHKL":["B","G","E","D","H","F","L","K"],
+"BDEFGHJL":["B","G","J","D","H","F","L","E"],
+"BDEFGHJK":["B","G","J","D","H","F","E","K"],
+"BDEFGHIL":["B","G","E","D","H","F","L","I"],
+"BDEFGHIK":["B","G","E","D","H","F","I","K"],
+"BDEFGHIJ":["B","G","J","D","H","F","E","I"],
+"BCGHIJKL":["H","G","I","C","J","B","L","K"],
+"BCFHIJKL":["C","J","B","F","I","H","L","K"],
+"BCFGIJKL":["C","G","B","F","J","I","L","K"],
+"BCFGHJKL":["C","G","B","F","H","J","L","K"],
+"BCFGHIKL":["C","G","B","F","I","H","L","K"],
+"BCFGHIJL":["C","G","B","F","H","J","L","I"],
+"BCFGHIJK":["C","G","B","F","H","J","I","K"],
+"BCEHIJKL":["E","J","I","C","H","B","L","K"],
+"BCEGIJKL":["E","G","I","C","J","B","L","K"],
+"BCEGHIKL":["E","G","I","C","H","B","L","K"],
+"BCEGHIJL":["E","G","J","C","H","B","L","I"],
+"BCEGHIJK":["E","G","J","C","H","B","I","K"],
+"BCEFIJKL":["C","J","E","B","I","F","L","K"],
+"BCEFHJKL":["C","J","E","B","H","F","L","K"],
+"BCEFHIKL":["C","E","I","B","H","F","L","K"],
+"BCEFHIJL":["C","J","E","B","H","F","L","I"],
+"BCEFHIJK":["C","J","E","B","H","F","I","K"],
+"BCEFGJKL":["C","G","E","B","J","F","L","K"],
+"BCEFGIKL":["C","G","E","B","I","F","L","K"],
+"BCEFGIJL":["C","G","E","B","J","F","L","I"],
+"BCEFGIJK":["C","G","E","B","J","F","I","K"],
+"BCEFGHKL":["C","G","E","B","H","F","L","K"],
+"BCEFGHJL":["C","G","J","B","H","F","L","E"],
+"BCEFGHJK":["C","G","J","B","H","F","E","K"],
+"BCEFGHIL":["C","G","E","B","H","F","L","I"],
+"BCEFGHIK":["C","G","E","B","H","F","I","K"],
+"BCEFGHIJ":["C","G","J","B","H","F","E","I"],
+"BCDFIJKL":["C","J","B","D","I","F","L","K"],
+"BCDFHJKL":["C","J","B","D","H","F","L","K"],
+"BCDFHIKL":["C","B","I","D","H","F","L","K"],
+"BCDFGIJL":["C","G","B","D","J","F","L","I"],
+"BCDFGIJK":["C","G","B","D","J","F","I","K"],
+"BCDFGHJL":["C","G","J","D","H","F","L","B"],
+"BCDFGHKL":["C","G","B","D","H","F","L","K"],
+"BCDFGHIL":["C","G","B","D","H","F","L","I"],
+"BCDFGHIK":["C","G","B","D","H","F","I","K"],
+"BCDFGHIJ":["C","G","J","D","H","F","B","I"],
+"BCDEHIJL":["E","J","I","C","H","B","L","D"],
+"BCDEGHIK":["E","G","I","C","H","B","I","K"],
+"BCDEGHIJ":["E","G","J","C","H","B","I","D"],
+"ABGHIJKL":["H","J","I","A","B","G","L","K"],
+"AFGHIJKL":["H","J","I","A","F","G","L","K"],
+"AEFGHIJL":["E","J","I","A","H","F","L","G"],
+"AEFGHIJK":["E","J","I","A","H","F","G","K"],
+"ADEFGHIJ":["E","G","J","A","H","F","D","I"]
+};
+
+// ══════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════════
+let S = {
+  nome:'', gironi:{}, thirds:[],
+  r32:new Array(16).fill(null),
+  r16:new Array(8).fill(null),
+  qf: new Array(4).fill(null),
+  sf: new Array(2).fill(null),
+  final:null, campione:'',
+  capocannoniere:{nome:'',squadra:''},
+  assistman:{nome:'',squadra:''}
+};
+Object.keys(GRP).forEach(k => S.gironi[k]=[...GRP[k].t]);
+
+// ══════════════════════════════════════════════════════════════
+// THIRDS RESOLUTION
+// ══════════════════════════════════════════════════════════════
+const MATCH_SLOT_IDX = {m74:3,m77:5,m79:0,m80:7,m81:2,m82:4,m85:1,m87:6};
+
+function resolveThirds() {
+  if(S.thirds.length!==8) return {};
+  const key = S.thirds.map(t=>t.g).sort().join('');
+  const combo = COMBO[key];
+  if(!combo){ return fallbackThirds(); }
+  const byGroup = {};
+  S.thirds.forEach(t=>byGroup[t.g]=t.team);
+  const res={};
+  Object.entries(MATCH_SLOT_IDX).forEach(([mid,idx])=>{
+    const g=combo[idx];
+    res[mid]=byGroup[g]||'?';
+  });
+  return res;
+}
+
+function fallbackThirds() {
+  const pools={
+    m74:'ABCDF',m77:'CDFGH',m79:'CEFHI',
+    m80:'EHIJK',m81:'BEFIJ',m82:'AEHIJ',
+    m85:'EFGIJ',m87:'DEIJL'
+  };
+  const byGroup={};
+  S.thirds.forEach(t=>byGroup[t.g]=t.team);
+  const available=new Set(S.thirds.map(t=>t.g));
+  const res={};
+  const mids=Object.keys(pools);
+  const sorted=[...mids].sort((a,b)=>{
+    const ca=pools[a].split('').filter(g=>available.has(g)).length;
+    const cb=pools[b].split('').filter(g=>available.has(g)).length;
+    return ca-cb;
+  });
+  sorted.forEach(mid=>{
+    const candidates=pools[mid].split('').filter(g=>available.has(g));
+    if(candidates.length>0){
+      const chosen=candidates[0];
+      res[mid]=byGroup[chosen];
+      available.delete(chosen);
+    } else {
+      const any=[...available][0];
+      if(any){res[mid]=byGroup[any];available.delete(any);}
+      else res[mid]='TBD';
+    }
+  });
+  return res;
+}
+
+// ══════════════════════════════════════════════════════════════
+// BRACKET DEFINITION
+// ══════════════════════════════════════════════════════════════
+const R32_DEF = [
+  {id:'m73',lbl:'M73',a:{tp:'R',g:'A'},b:{tp:'R',g:'B'}},
+  {id:'m74',lbl:'M74',a:{tp:'W',g:'E'},b:{tp:'T',mid:'m74'}},
+  {id:'m75',lbl:'M75',a:{tp:'W',g:'F'},b:{tp:'R',g:'C'}},
+  {id:'m76',lbl:'M76',a:{tp:'W',g:'C'},b:{tp:'R',g:'F'}},
+  {id:'m77',lbl:'M77',a:{tp:'W',g:'I'},b:{tp:'T',mid:'m77'}},
+  {id:'m78',lbl:'M78',a:{tp:'R',g:'E'},b:{tp:'R',g:'I'}},
+  {id:'m79',lbl:'M79',a:{tp:'W',g:'A'},b:{tp:'T',mid:'m79'}},
+  {id:'m80',lbl:'M80',a:{tp:'W',g:'L'},b:{tp:'T',mid:'m80'}},
+  {id:'m81',lbl:'M81',a:{tp:'W',g:'D'},b:{tp:'T',mid:'m81'}},
+  {id:'m82',lbl:'M82',a:{tp:'W',g:'G'},b:{tp:'T',mid:'m82'}},
+  {id:'m83',lbl:'M83',a:{tp:'R',g:'K'},b:{tp:'R',g:'L'}},
+  {id:'m84',lbl:'M84',a:{tp:'W',g:'H'},b:{tp:'R',g:'J'}},
+  {id:'m85',lbl:'M85',a:{tp:'W',g:'B'},b:{tp:'T',mid:'m85'}},
+  {id:'m86',lbl:'M86',a:{tp:'W',g:'J'},b:{tp:'R',g:'H'}},
+  {id:'m87',lbl:'M87',a:{tp:'W',g:'K'},b:{tp:'T',mid:'m87'}},
+  {id:'m88',lbl:'M88',a:{tp:'R',g:'D'},b:{tp:'R',g:'G'}},
+];
+// Accoppiamenti FIFA ufficiali Mondiale 2026
+// R32 idx: 0=M73,1=M74,2=M75,3=M76,4=M77,5=M78,6=M79,7=M80,8=M81,9=M82,10=M83,11=M84,12=M85,13=M86,14=M87,15=M88
+// Ottavi: M89=W74vsW77, M90=W73vsW75, M91=W76vsW78, M92=W79vsW80, M93=W83vsW84, M94=W81vsW82, M95=W86vsW88, M96=W85vsW87
+const R16_PAIRS=[[1,4],[0,2],[3,5],[6,7],[10,11],[8,9],[13,15],[12,14]];
+// Quarti: M97=W89vsW90, M98=W93vsW94, M99=W91vsW92, M100=W95vsW96
+// R16 idx: 0=M89,1=M90,2=M91,3=M92,4=M93,5=M94,6=M95,7=M96
+const QF_PAIRS =[[0,1],[4,5],[2,3],[6,7]];
+// Semi: M101=W97vsW98, M102=W99vsW100 → QF idx 0,1,2,3
+const SF_PAIRS =[[0,1],[2,3]];
+
+// ══════════════════════════════════════════════════════════════
+// FIX 1: DRAG & DROP CON TOUCH SUPPORT PER IPHONE
+// ══════════════════════════════════════════════════════════════
+// Touch drag state
+let touchDragSrc=null, touchDragClone=null, touchDragG=null, touchDragI=null;
+
+function initDragItem(li){
+  // Desktop drag events
+  li.setAttribute('draggable','true');
+  li.addEventListener('dragstart',dStart);
+  li.addEventListener('dragover',dOver);
+  li.addEventListener('drop',dDrop);
+  li.addEventListener('dragend',dEnd);
+
+  // Touch events for iOS
+  li.addEventListener('touchstart',tStart,{passive:false});
+  li.addEventListener('touchmove',tMove,{passive:false});
+  li.addEventListener('touchend',tEnd,{passive:false});
+}
+
+let dragSrc=null;
+function dStart(e){dragSrc=this;this.classList.add('dragging');e.dataTransfer.effectAllowed='move';}
+function dOver(e){e.preventDefault();document.querySelectorAll('.rank-item').forEach(i=>i.classList.remove('dragover'));this.classList.add('dragover');}
+function dDrop(e){
+  e.stopPropagation();if(dragSrc===this)return;
+  const g=this.dataset.g,fi=+dragSrc.dataset.i,ti=+this.dataset.i;
+  const[m]=S.gironi[g].splice(fi,1);S.gironi[g].splice(ti,0,m);
+  renderRankList(g);prog();
+}
+function dEnd(){document.querySelectorAll('.rank-item').forEach(i=>i.classList.remove('dragging','dragover'));}
+
+function tStart(e){
+  const li=e.currentTarget;
+  touchDragSrc=li;
+  touchDragG=li.dataset.g;
+  touchDragI=+li.dataset.i;
+  // Crea clone visivo
+  const rect=li.getBoundingClientRect();
+  touchDragClone=li.cloneNode(true);
+  touchDragClone.style.cssText=`position:fixed;z-index:9999;width:${rect.width}px;pointer-events:none;opacity:0.85;background:#1c2537;border:1px solid var(--accent);border-radius:6px;padding:5px 6px;font-family:Barlow,sans-serif;font-size:13px;color:#e8edf5;display:flex;align-items:center;gap:7px;box-shadow:0 8px 24px rgba(0,0,0,.5);`;
+  touchDragClone.style.top=(e.touches[0].clientY-20)+'px';
+  touchDragClone.style.left=(e.touches[0].clientX-rect.width/2)+'px';
+  document.body.appendChild(touchDragClone);
+  li.classList.add('dragging');
+  e.preventDefault();
+}
+
+function tMove(e){
+  if(!touchDragClone) return;
+  e.preventDefault();
+  const t=e.touches[0];
+  touchDragClone.style.top=(t.clientY-20)+'px';
+  touchDragClone.style.left=(t.clientX-60)+'px';
+  // Trova elemento sotto
+  touchDragClone.style.display='none';
+  const el=document.elementFromPoint(t.clientX,t.clientY);
+  touchDragClone.style.display='flex';
+  document.querySelectorAll('.rank-item').forEach(i=>i.classList.remove('dragover'));
+  const target=el&&el.closest('.rank-item');
+  if(target&&target!==touchDragSrc) target.classList.add('dragover');
+}
+
+function tEnd(e){
+  if(!touchDragClone) return;
+  const t=e.changedTouches[0];
+  touchDragClone.style.display='none';
+  const el=document.elementFromPoint(t.clientX,t.clientY);
+  touchDragClone.style.display='flex';
+  const target=el&&el.closest('.rank-item');
+  if(target&&target!==touchDragSrc&&target.dataset.g===touchDragG){
+    const ti=+target.dataset.i;
+    const[m]=S.gironi[touchDragG].splice(touchDragI,1);
+    S.gironi[touchDragG].splice(ti,0,m);
+    renderRankList(touchDragG);prog();
+  }
+  document.querySelectorAll('.rank-item').forEach(i=>i.classList.remove('dragging','dragover'));
+  if(touchDragClone){touchDragClone.remove();touchDragClone=null;}
+  touchDragSrc=null;touchDragG=null;touchDragI=null;
+}
+
+function renderGironi(cid,keys){
+  const c=document.getElementById(cid);c.innerHTML='';
+  keys.forEach(k=>{
+    const d=document.createElement('div');d.className='girone-card';
+    d.innerHTML=`<div class="girone-header"><span>GIRONE ${k}</span><span class="girone-status">trascina per ordinare</span></div><ul class="rank-list" id="rl-${k}"></ul>`;
+    c.appendChild(d);renderRankList(k);
+  });
+}
+
+function renderRankList(k){
+  const l=document.getElementById(`rl-${k}`);l.innerHTML='';
+  const rc=['r1','r2','r3','r4'];
+  S.gironi[k].forEach((t,i)=>{
+    const li=document.createElement('li');li.className='rank-item';
+    li.dataset.g=k;li.dataset.i=i;
+    li.innerHTML=`<span class="rank-num ${rc[i]}">${i+1}</span><span class="rank-name">${flag(t)} ${t}</span><span class="drag-handle">⠿</span>`;
+    initDragItem(li);
+    l.appendChild(li);
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+// THIRDS
+// ══════════════════════════════════════════════════════════════
+function renderThirds(){
+  const g=document.getElementById('tgrid');g.innerHTML='';
+  Object.keys(GRP).forEach(k=>{
+    const team=S.gironi[k][2];
+    const sel=S.thirds.some(t=>t.g===k);
+    const first=S.gironi[k][0];
+    const second=S.gironi[k][1];
+    const fourth=S.gironi[k][3];
+    const d=document.createElement('div');
+    d.className='third-card'+(sel?' selected':'');
+    d.innerHTML=`
+      <span class="group-lbl">GIR.<br>${k}</span>
+      <div class="third-info">
+        <div class="team-name">${flag(team)} ${team}</div>
+        <div class="third-context">
+          <span style="font-size:10px;">Girone con:</span>
+          <div class="ctx-teams">
+            <span class="ctx-badge q">🥇 ${first}</span>
+            <span class="ctx-badge q">🥈 ${second}</span>
+            <span class="ctx-badge">❌ ${fourth}</span>
+          </div>
+        </div>
+      </div>
+      <span class="check-icon">${sel?'✓':''}</span>`;
+    d.addEventListener('click',()=>{
+      const idx=S.thirds.findIndex(x=>x.g===k);
+      if(idx>=0){S.thirds.splice(idx,1);}
+      else if(S.thirds.length<8){S.thirds.push({g:k,team});}
+      S.r32=new Array(16).fill(null);S.r16=new Array(8).fill(null);
+      S.qf=new Array(4).fill(null);S.sf=new Array(2).fill(null);
+      S.final=null;S.campione='';
+      renderThirds();prog();
+    });
+    g.appendChild(d);
+  });
+  document.getElementById('tcnt').textContent=S.thirds.length;
+  document.getElementById('btn-ko').disabled=(S.thirds.length!==8);
+  prog();
+}
+
+// ══════════════════════════════════════════════════════════════
+// BRACKET ENGINE
+// ══════════════════════════════════════════════════════════════
+function getTeam(spec,thirds){
+  if(spec.tp==='W') return S.gironi[spec.g][0];
+  if(spec.tp==='R') return S.gironi[spec.g][1];
+  if(spec.tp==='T') return thirds[spec.mid]||'TBD';
+  return 'TBD';
+}
+function getLbl(spec,thirds){
+  if(spec.tp==='W') return `1° Gir.${spec.g}`;
+  if(spec.tp==='R') return `2° Gir.${spec.g}`;
+  if(spec.tp==='T') return `Miglior 3ª`;
+  return '';
+}
+
+function buildBracket(){
+  const thirds=resolveThirds();
+  const bc=document.getElementById('bracket');bc.innerHTML='';
+  
+  const r32matches=R32_DEF.map((def,i)=>({
+    i, lbl:def.lbl,
+    teamA:getTeam(def.a,thirds), lblA:getLbl(def.a,thirds),
+    teamB:getTeam(def.b,thirds), lblB:getLbl(def.b,thirds),
+    winner:S.r32[i]
+  }));
+  renderRound(bc,'Sedicesimi di Finale (Round of 32)',r32matches,'r32',
+    i=>pickWinner('r32',i,r32matches[i]));
+  
+  if(S.r32.some(r=>r)){
+    const r16m=R16_PAIRS.map(([a,b],i)=>({
+      i,lbl:`Ott. ${i+1}`,
+      teamA:S.r32[a]||'TBD', lblA:'',
+      teamB:S.r32[b]||'TBD', lblB:'',
+      winner:S.r16[i]
+    }));
+    renderRound(bc,'Ottavi di Finale (Round of 16)',r16m,'r16',
+      i=>pickWinner('r16',i,r16m[i]));
+  }
+  if(S.r16.some(r=>r)){
+    const qfm=QF_PAIRS.map(([a,b],i)=>({
+      i,lbl:`Quarti ${i+1}`,
+      teamA:S.r16[a]||'TBD', lblA:'',
+      teamB:S.r16[b]||'TBD', lblB:'',
+      winner:S.qf[i]
+    }));
+    renderRound(bc,'Quarti di Finale',qfm,'qf',i=>pickWinner('qf',i,qfm[i]));
+  }
+  if(S.qf.some(r=>r)){
+    const sfm=SF_PAIRS.map(([a,b],i)=>({
+      i,lbl:`Semifinale ${i+1}`,
+      teamA:S.qf[a]||'TBD', lblA:'',
+      teamB:S.qf[b]||'TBD', lblB:'',
+      winner:S.sf[i]
+    }));
+    renderRound(bc,'Semifinali',sfm,'sf',i=>pickWinner('sf',i,sfm[i]));
+  }
+  if(S.sf.some(r=>r)){
+    const fm=[{
+      i:0,lbl:'🏆 Finale',
+      teamA:S.sf[0]||'TBD', lblA:'',
+      teamB:S.sf[1]||'TBD', lblB:'',
+      winner:S.final
+    }];
+    renderRound(bc,'Finale',fm,'final',i=>team=>{
+      S.final= S.final===team?null:team;
+      S.campione= S.final||'';
+      buildBracket();prog();
+    });
+  }
+  
+  const cbox=document.getElementById('cbox');
+  if(S.final){
+    cbox.style.display='block';
+    document.getElementById('cname').textContent=flag(S.final)+' '+S.final;
+  } else {
+    cbox.style.display='none';
+  }
+  // Abilita tasto Marcatori solo se campione selezionato
+  const btnMarc=document.getElementById('btn-marc');
+  if(btnMarc) btnMarc.disabled=!S.final;
+}
+
+function pickWinner(round,idx,match){
+  return function(team){
+    if(round==='r32'){S.r32[idx]=S.r32[idx]===team?null:team;cascadeFrom('r32',idx);}
+    else if(round==='r16'){S.r16[idx]=S.r16[idx]===team?null:team;cascadeFrom('r16',idx);}
+    else if(round==='qf'){S.qf[idx]=S.qf[idx]===team?null:team;cascadeFrom('qf',idx);}
+    else if(round==='sf'){S.sf[idx]=S.sf[idx]===team?null:team;cascadeFrom('sf',idx);}
+    else if(round==='final'){S.final=S.final===team?null:team;S.campione=S.final||'';}
+    buildBracket();prog();
+  };
+}
+
+// Trova l'indice del match del turno successivo che contiene un dato indice
+function findPairIndex(pairs, idx){
+  for(let i=0;i<pairs.length;i++) if(pairs[i][0]===idx||pairs[i][1]===idx) return i;
+  return -1;
+}
+
+function cascadeFrom(round,idx){
+  if(round==='r32'){
+    const r16idx=findPairIndex(R16_PAIRS,idx);
+    if(r16idx>=0&&S.r16[r16idx]){
+      const pair=R16_PAIRS[r16idx];
+      if(S.r16[r16idx]===S.r32[pair[0]]||S.r16[r16idx]===S.r32[pair[1]]){
+        S.r16[r16idx]=null;cascadeFrom('r16',r16idx);
+      }
+    }
+  } else if(round==='r16'){
+    const qi=findPairIndex(QF_PAIRS,idx);
+    if(qi>=0&&S.qf[qi]){const p=QF_PAIRS[qi];
+      if(S.qf[qi]===S.r16[p[0]]||S.qf[qi]===S.r16[p[1]]){S.qf[qi]=null;cascadeFrom('qf',qi);}}
+  } else if(round==='qf'){
+    const si=findPairIndex(SF_PAIRS,idx);
+    if(si>=0&&S.sf[si]){const p=SF_PAIRS[si];
+      if(S.sf[si]===S.qf[p[0]]||S.sf[si]===S.qf[p[1]]){S.sf[si]=null;cascadeFrom('sf',si);}}
+  } else if(round==='sf'){
+    if(S.final&&(S.final===S.sf[0]||S.final===S.sf[1])){S.final=null;S.campione='';}
+  }
+}
+
+// FIX 8: renderRound con bandierine al posto delle iniziali
+function renderRound(container, title, matches, roundKey, getClickFn){
+  const sec=document.createElement('div');sec.className='bracket-round';
+  sec.innerHTML=`<div class="round-title">${title}</div><div class="matches-grid" id="mg-${roundKey}"></div>`;
+  container.appendChild(sec);
+  const grid=document.getElementById(`mg-${roundKey}`);
+  
+  matches.forEach(m=>{
+    const isTBD_A=m.teamA==='TBD',isTBD_B=m.teamB==='TBD';
+    const canClick=!isTBD_A&&!isTBD_B;
+    const card=document.createElement('div');card.className='match-card';
+    const winA=m.winner===m.teamA,winB=m.winner===m.teamB;
+    const loseA=m.winner&&!winA,loseB=m.winner&&!winB;
+    
+    // FIX 6+8: bandierina nel tbadge E nel testo del team
+    const flagA=isTBD_A?'❓':flag(m.teamA);
+    const flagB=isTBD_B?'❓':flag(m.teamB);
+    
+    card.innerHTML=`
+      <div class="match-header"><span>${m.lbl}</span><span>${m.lblA||''}</span></div>
+      <button class="match-team${winA?' winner':''}${loseA?' loser':''}${isTBD_A?' tbd-team':''}"
+        ${!canClick?'disabled':''} data-team="${m.teamA}" data-round="${roundKey}" data-idx="${m.i}">
+        <div class="tbadge">${flagA}</div>
+        <span>${m.teamA}</span>
+      </button>
+      <div class="match-vs">VS</div>
+      <button class="match-team${winB?' winner':''}${loseB?' loser':''}${isTBD_B?' tbd-team':''}"
+        ${!canClick?'disabled':''} data-team="${m.teamB}" data-round="${roundKey}" data-idx="${m.i}">
+        <div class="tbadge">${flagB}</div>
+        <span>${m.teamB}</span>
+      </button>`;
+    
+    const fn=getClickFn(m.i);
+    card.querySelectorAll('.match-team:not([disabled])').forEach(btn=>{
+      btn.addEventListener('click',()=>fn(btn.dataset.team));
+    });
+    grid.appendChild(card);
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+// FIX 9: MARCATORI
+// ══════════════════════════════════════════════════════════════
+function initMarcatoriDropdowns(){
+  ['capocannoniere','assistman'].forEach(role=>{
+    const sel=document.getElementById(`${role}-squadra`);
+    ALL_TEAMS.forEach(t=>{
+      const opt=document.createElement('option');
+      opt.value=t;opt.textContent=flag(t)+' '+t;
+      sel.appendChild(opt);
+    });
+  });
+}
+
+// Quando si sceglie la squadra, popola il dropdown dei giocatori (no GK)
+function onSquadraChange(role){
+  const squadra=document.getElementById(`${role}-squadra`).value;
+  const selG=document.getElementById(`${role}-giocatore`);
+  selG.innerHTML='';
+  if(!squadra){
+    selG.innerHTML='<option value="">— Prima scegli la squadra —</option>';
+    selG.disabled=true;
+  } else {
+    selG.disabled=false;
+    selG.innerHTML='<option value="">— Seleziona il giocatore —</option>';
+    const players=(PLAYERS[squadra]||[]).slice().sort((a,b)=>a.localeCompare(b));
+    players.forEach(p=>{
+      const opt=document.createElement('option');
+      opt.value=p;opt.textContent=p;
+      selG.appendChild(opt);
+    });
+  }
+  updateMarcatorePreview(role);
+}
+
+// Ripristina le scelte marcatori quando si rientra nello step
+function restoreMarcatori(){
+  ['capocannoniere','assistman'].forEach(role=>{
+    const saved=S[role];
+    if(saved && saved.squadra){
+      const selS=document.getElementById(`${role}-squadra`);
+      if(selS.value!==saved.squadra){
+        selS.value=saved.squadra;
+        onSquadraChange(role); // ripopola i giocatori
+      }
+      if(saved.nome){
+        const selG=document.getElementById(`${role}-giocatore`);
+        selG.value=saved.nome;
+        updateMarcatorePreview(role);
+      }
+    }
+  });
+}
+
+function updateMarcatorePreview(role){
+  const squadra=document.getElementById(`${role}-squadra`).value;
+  const selG=document.getElementById(`${role}-giocatore`);
+  const nome=selG?selG.value:'';
+  const prev=document.getElementById(`${role}-preview`);
+  const prevTxt=document.getElementById(`${role}-preview-txt`);
+  S[role]={nome,squadra};
+  if(nome&&squadra){
+    prevTxt.textContent=`${nome} (${flag(squadra)} ${squadra})`;
+    prev.style.display='block';
+  } else {
+    prev.style.display='none';
+  }
+  prog();
+}
+
+// ══════════════════════════════════════════════════════════════
+// RECAP
+// ══════════════════════════════════════════════════════════════
+function renderRecap(){
+  S.nome=document.getElementById('pname').value.trim()||'Giocatore';
+  // Salva stato marcatori
+  S.capocannoniere={
+    nome:document.getElementById('capocannoniere-giocatore').value,
+    squadra:document.getElementById('capocannoniere-squadra').value
+  };
+  S.assistman={
+    nome:document.getElementById('assistman-giocatore').value,
+    squadra:document.getElementById('assistman-squadra').value
+  };
+
+  let html=`<div class="recap-player">${S.nome}</div>`;
+  html+=`<div class="rlabel">Gironi</div><div class="rgrid">`;
+  Object.entries(S.gironi).forEach(([k,t])=>{
+    html+=`<div class="rg"><div class="rg-title">Girone ${k}</div><ol>${t.map(x=>`<li>${flag(x)} ${x}</li>`).join('')}</ol></div>`;
+  });
+  html+='</div>';
+  html+=`<div class="rlabel">8 Migliori Terze</div><div class="badges">${S.thirds.map(t=>`<span class="badge">${flag(t.team)} 3°${t.g}: ${t.team}</span>`).join('')||'—'}</div>`;
+  const rounds=[
+    {l:'Sedicesimi — Vincitori',d:S.r32},
+    {l:'Ottavi — Vincitori',d:S.r16},
+    {l:'Quarti — Vincitori',d:S.qf},
+    {l:'Semifinali — Vincitori',d:S.sf},
+  ];
+  rounds.forEach(r=>{
+    const v=r.d.filter(x=>x);
+    html+=`<div class="rlabel">${r.l}</div><div class="badges">${v.length?v.map(x=>`<span class="badge">${flag(x)} ${x}</span>`).join(''):'<span style="color:var(--muted)">—</span>'}</div>`;
+  });
+  html+=`<div class="rlabel">Campione</div><div class="badges"><span class="badge gold">🏆 ${S.final?flag(S.final)+' '+S.final:'—'}</span></div>`;
+  
+  // Marcatori nel recap
+  const cc=S.capocannoniere;
+  const am=S.assistman;
+  const ccTxt = cc.nome ? (cc.nome + (cc.squadra ? ' ('+flag(cc.squadra)+' '+cc.squadra+')' : '')) : '—';
+  const amTxt = am.nome ? (am.nome + (am.squadra ? ' ('+flag(am.squadra)+' '+am.squadra+')' : '')) : '—';
+  html+=`<div class="rlabel">Capocannoniere</div><div class="badges"><span class="badge gold">⚽ ${ccTxt}</span></div>`;
+  html+=`<div class="rlabel">Miglior Assistman</div><div class="badges"><span class="badge gold">🎯 ${amTxt}</span></div>`;
+
+  document.getElementById('rbody').innerHTML=html;
+}
+
+// ══════════════════════════════════════════════════════════════
+// FIX 2: PROGRESS BAR (arriva a 100%)
+// Pesi: nome(5) + gironi ordinati(25) + terze(20) + ko completo(50) = 100
+// Ko: 16 r32 + 8 r16 + 4 qf + 2 sf + 1 final = 31 selezioni → mappo su 50
+// ══════════════════════════════════════════════════════════════
+function prog(){
+  let p=0;
+  // Nome: 5pt
+  if(document.getElementById('pname').value.trim()) p+=5;
+  // Gironi: 25pt (fissi, non c'è modo di "non compilarli")
+  p+=25;
+  // Terze: 20pt
+  if(S.thirds.length===8) p+=20;
+  // Knockout: 50pt proporzionale a selezioni fatte (max 31)
+  const ko=S.r32.filter(r=>r).length
+           +S.r16.filter(r=>r).length
+           +S.qf.filter(r=>r).length
+           +S.sf.filter(r=>r).length
+           +(S.final?1:0);
+  p+=Math.round((ko/31)*50);
+  p=Math.min(100,p);
+  document.getElementById('pfill').style.width=p+'%';
+  document.getElementById('ppct').textContent=p+'%';
+  document.getElementById('ptxt').textContent=
+    p<10?'Inizia':
+    p<40?'In corso...':
+    p<70?'Buona strada!':
+    p<95?'Quasi finito...':
+    'Pronostico completo! ✓';
+}
+
+// ══════════════════════════════════════════════════════════════
+// NAVIGATION — blocco avanti se fase non completa
+// ══════════════════════════════════════════════════════════════
+
+// Restituisce lo step corrente attivo
+function currentStep(){
+  const panels=document.querySelectorAll('.step-panel');
+  for(let i=0;i<panels.length;i++) if(panels[i].classList.contains('active')) return i;
+  return 0;
+}
+
+// Controlla se uno step è "completato" (si può andare avanti)
+function stepComplete(n){
+  if(n===0) return !!document.getElementById('pname').value.trim();
+  if(n===1||n===2) return true; // gironi sempre OK
+  if(n===3) return S.thirds.length===8;
+  if(n===4) return !!S.final;
+  if(n===5){
+    // Marcatori obbligatori: capocannoniere e assistman entrambi compilati
+    const cc=S.capocannoniere||{};
+    const am=S.assistman||{};
+    return !!(cc.nome && cc.squadra && am.nome && am.squadra);
+  }
+  return true;
+}
+
+function goStep(n){
+  const cur=currentStep();
+  const nome=document.getElementById('pname').value.trim();
+
+  // Blocco: se si tenta di andare AVANTI
+  if(n>cur){
+    // Controlla tutti gli step tra cur e n-1
+    for(let i=cur;i<n;i++){
+      if(!stepComplete(i)){
+        // Feedback visivo specifico per step 0
+        if(i===0){
+          document.getElementById('pname').focus();
+          document.getElementById('pname').style.borderColor='var(--accent2)';
+        }
+        showToastErr(stepErrMsg(i));
+        return;
+      }
+    }
+    // Controllo nome duplicato quando si lascia lo step 0
+    if(cur===0 && usedNames.has(nome.toLowerCase())){
+      document.getElementById('pname').focus();
+      document.getElementById('pname').style.borderColor='var(--accent2)';
+      showToastErr('⚠️ Il nome "'+nome+'" è già stato usato! Scegline un altro.');
+      return;
+    }
+  }
+  document.getElementById('pname').style.borderColor='';
+  if(n===3) renderThirds();
+  if(n===4) buildBracket();
+  if(n===5) restoreMarcatori();
+  if(n===6) renderRecap();
+  document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.step-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(`step-${n}`).classList.add('active');
+  document.querySelector(`[data-step="${n}"]`).classList.add('active');
+  prog();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function stepErrMsg(n){
+  if(n===0) return '⚠️ Inserisci il tuo nome!';
+  if(n===3) return '⚠️ Seleziona 8 migliori terze!';
+  if(n===4) return '⚠️ Completa il tabellone e scegli il campione!';
+  if(n===5) return '⚠️ Seleziona squadra e giocatore per Capocannoniere e Assistman!';
+  return '⚠️ Completa questa sezione prima di andare avanti.';
+}
+
+// Toast di errore (rosso)
+function showToastErr(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.style.background='var(--accent2)';
+  t.style.color='#fff';
+  t.classList.add('show');
+  setTimeout(()=>{
+    t.classList.remove('show');
+    setTimeout(()=>{t.style.background='';t.style.color='';t.textContent='✓ Copiato!';},300);
+  },2200);
+}
+
+document.querySelectorAll('.step-tab').forEach(t=>t.addEventListener('click',()=>goStep(+t.dataset.step)));
+
+// ══════════════════════════════════════════════════════════════
+// INVIO PRONOSTICO
+// ══════════════════════════════════════════════════════════════
+async function sendPronostico(){
+  // CONGELAMENTO: blocca l'invio dopo la deadline
+  if(new Date() >= DEADLINE){
+    document.getElementById('send-status').textContent='⛔ Pronostici chiusi! Il termine era '+DEADLINE.toLocaleString('it-IT',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+'. Non è più possibile inviare.';
+    document.getElementById('send-status').style.color='var(--accent2)';
+    const b=document.getElementById('send-btn');
+    b.disabled=true;b.textContent='⛔ Pronostici chiusi';
+    return;
+  }
+  // Salva anche stato marcatori prima di inviare
+  S.capocannoniere={
+    nome:document.getElementById('capocannoniere-giocatore').value,
+    squadra:document.getElementById('capocannoniere-squadra').value
+  };
+  S.assistman={
+    nome:document.getElementById('assistman-giocatore').value,
+    squadra:document.getElementById('assistman-squadra').value
+  };
+
+  const btn=document.getElementById('send-btn');
+  btn.disabled=true;
+  btn.textContent='⏳ Verifica nome...';
+  const ENDPOINT=SHEET_URL;
+
+  // Ricontrollo nome duplicato in tempo reale prima di inviare
+  const nomeFinale=(S.nome||document.getElementById('pname').value.trim());
+  try{
+    const chk=await fetch(ENDPOINT+'?t='+Date.now());
+    const cd=await chk.json();
+    if(cd.status==='ok'&&cd.players){
+      const taken=cd.players.some(row=>{
+        try{const o=JSON.parse(row.json);return o.nome&&o.nome.trim().toLowerCase()===nomeFinale.trim().toLowerCase();}catch(e){return false;}
+      });
+      if(taken){
+        btn.disabled=false;btn.textContent='📨 CONFERMA E INVIA';
+        document.getElementById('send-status').textContent='⚠️ Il nome "'+nomeFinale+'" è già stato usato da qualcun altro. Torna alla scheda Nome e cambialo.';
+        document.getElementById('send-status').style.color='var(--accent2)';
+        return;
+      }
+    }
+  }catch(e){/* se la verifica fallisce, procedo comunque con l'invio */}
+
+  btn.textContent='⏳ Invio in corso...';
+  try{
+    await fetch(ENDPOINT,{
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(S)
+    });
+    btn.textContent='✅ Pronostico inviato!';
+    btn.style.background='linear-gradient(135deg,#16a34a,#15803d)';
+    document.getElementById('send-status').textContent='Il tuo pronostico è stato salvato. Grazie!';
+    document.getElementById('send-status').style.color='var(--green)';
+    // Sblocco il pulsante "Torna alla dashboard"
+    const td=document.getElementById('torna-dashboard-btn');
+    if(td){
+      td.disabled=false;
+      td.textContent='🏠 Torna alla dashboard';
+      td.style.opacity='';
+      td.style.cursor='';
+    }
+  }catch(err){
+    btn.disabled=false;
+    btn.textContent='📨 CONFERMA E INVIA';
+    document.getElementById('send-status').textContent='❌ Errore di rete. Riprova.';
+    document.getElementById('send-status').style.color='var(--accent2)';
+  }
+}
+
+// Torna alla dashboard - chiamato solo dopo invio riuscito (pulsante altrimenti disabilitato)
+function tornaDashboard(){
+  window.location.href='https://fc77-jd.github.io/mondofello/';
+}
+
+// ══════════════════════════════════════════════════════════════
+// SHARE CARD GENERATOR — Safari/iOS safe
+// Strategia: aspetta document.fonts.ready, poi usa solo font di
+// sistema (Arial Black / Arial) per garantire rendering su Safari.
+// Barlow Condensed viene usato solo se già caricato.
+// ══════════════════════════════════════════════════════════════
+function generateCard(){
+  // Mostra spinner durante generazione
+  const btn=document.querySelector('.share-box .btn-share');
+  if(btn){btn.textContent='⏳ Generando...';btn.disabled=true;}
+
+  document.fonts.ready.then(()=>{
+    const probe=document.createElement('span');
+    probe.style.cssText='position:absolute;visibility:hidden;font-family:"Barlow Condensed",Arial;font-size:1px;';
+    probe.textContent='MondoFello';
+    document.body.appendChild(probe);
+    setTimeout(()=>{
+      document.body.removeChild(probe);
+      _drawCard();
+      if(btn){btn.textContent='🎨 Genera Card';btn.disabled=false;}
+      // Mostra preview e aggiorna testo bottone per Safari/iOS
+      document.getElementById('card-preview').style.display='block';
+      document.getElementById('card-preview').scrollIntoView({behavior:'smooth',block:'center'});
+      const isSafari=/^((?!chrome|android).)*safari/i.test(navigator.userAgent)||/iPad|iPhone|iPod/.test(navigator.userAgent);
+      const dlBtn=document.getElementById('dl-btn');
+      if(dlBtn) dlBtn.textContent=isSafari?'📲 Apri e salva immagine':'⬇️ Scarica Immagine';
+    },200);
+  });
+}
+
+function _drawCard(){
+  const S_=S;
+  const canvas=document.getElementById('share-canvas');
+  const W=900,H=1500;canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  const FC='"Barlow Condensed","Arial Black",Arial', FB='Barlow,Arial,sans-serif';
+  function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();}
+  function fit(team,maxW,font){if(!team||team==='TBD')return{txt:'—',fl:''};ctx.save();ctx.font=font;const w=ctx.measureText(team).width;ctx.restore();if(w<=maxW)return{txt:team,fl:flag(team)};return{txt:team.replace(/[\u{1F000}-\u{1FFFF}]/gu,'').trim().slice(0,3).toUpperCase(),fl:flag(team)};}
+  // bg
+  const bg=ctx.createLinearGradient(0,0,W,H);bg.addColorStop(0,'#060d1c');bg.addColorStop(.5,'#0b1527');bg.addColorStop(1,'#060d1c');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  // header
+  ctx.fillStyle='rgba(245,197,24,0.1)';ctx.fillRect(0,0,W,90);
+  ctx.save();ctx.font=`bold 50px ${FC}`;ctx.fillStyle='#e8edf5';ctx.textAlign='left';ctx.fillText('MONDO',36,62);
+  const mw=ctx.measureText('MONDO').width;ctx.fillStyle='#f5c518';ctx.fillText('FELLO',36+mw,62);
+  const fw=ctx.measureText('FELLO').width;ctx.font=`bold 26px ${FC}`;ctx.fillStyle='rgba(245,197,24,.7)';ctx.fillText('26',36+mw+fw+5,62);ctx.restore();
+  ctx.save();ctx.font=`bold 26px ${FC}`;ctx.textAlign='right';ctx.fillStyle='#f5c518';ctx.fillText(S_.nome||'Giocatore',W-36,58);ctx.restore();
+  let cy=120;
+  // GIRONI
+  ctx.save();ctx.font=`bold 18px ${FC}`;ctx.fillStyle='rgba(245,197,24,.8)';ctx.textAlign='left';ctx.fillText('▸ GIRONI',36,cy);ctx.restore();cy+=14;
+  const GC=4,GW=Math.floor((W-72-30)/GC),GH=82,GP=10,GK=Object.keys(GRP);
+  const thirdsSet=new Set((S_.thirds||[]).map(x=>x.g));
+  GK.forEach((k,idx)=>{
+    const col=idx%GC,row=Math.floor(idx/GC),gx=36+col*(GW+GP),gy=cy+row*(GH+8);
+    ctx.save();rr(gx,gy,GW,GH,6);ctx.fillStyle='rgba(28,37,55,.95)';ctx.fill();ctx.strokeStyle='rgba(245,197,24,.18)';ctx.stroke();ctx.restore();
+    ctx.save();ctx.font=`bold 11px ${FC}`;ctx.fillStyle='#f5c518';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('GIRONE '+k,gx+GW/2,gy+12);ctx.restore();
+    const teams=(S_.gironi&&S_.gironi[k])||[];
+    teams.forEach((t,i)=>{
+      const ty=gy+28+i*13;const qual=i<2||(i===2&&thirdsSet.has(k));
+      ctx.save();ctx.font=`${i<2?'700':'500'} 10px ${FB}`;ctx.fillStyle=qual?'#e8edf5':'#5a6b80';ctx.textAlign='left';ctx.textBaseline='middle';
+      let lb=flag(t)+' '+t;while(ctx.measureText(lb).width>GW-20&&lb.length>4)lb=lb.slice(0,-2)+'…';
+      ctx.fillText(lb,gx+7,ty);ctx.restore();
+      if(qual){ctx.save();ctx.font=`bold 10px ${FB}`;ctx.fillStyle='#22c55e';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText('✓',gx+GW-5,ty);ctx.restore();}
+    });
+  });
+  cy+=3*(GH+8)+16;
+  // BRACKET
+  ctx.save();ctx.font=`bold 18px ${FC}`;ctx.fillStyle='rgba(59,130,246,.85)';ctx.textAlign='left';ctx.fillText('▸ TABELLONE',36,cy);ctx.restore();cy+=18;
+  // usa resolveThirds() già presente nel form per ottenere matchId→teamName
+  const cardThirds=resolveThirds();
+  function cardTeam(spec){
+    if(spec.tp==='W')return (S_.gironi&&S_.gironi[spec.g])?S_.gironi[spec.g][0]:'TBD';
+    if(spec.tp==='R')return (S_.gironi&&S_.gironi[spec.g])?S_.gironi[spec.g][1]:'TBD';
+    if(spec.tp==='T')return cardThirds[spec.mid]||'TBD';
+    return 'TBD';
+  }
+  // R32_DEF nel form ha key 'a'/'b' come oggetti {tp,g} oppure {tp,mid}
+  const r32M=R32_DEF.map(d=>({a:cardTeam(d.a),b:cardTeam(d.b)}));
+  function leavesOrd(qfList){const o=[];qfList.forEach(qi=>{const[o1,o2]=QF_PAIRS[qi];[o1,o2].forEach(oi=>{const[s1,s2]=R16_PAIRS[oi];o.push(s1,s2);});});return o;}
+  const lLeaves=leavesOrd([0,1]),rLeaves=leavesOrd([2,3]);
+  const lOtt=[QF_PAIRS[0][0],QF_PAIRS[0][1],QF_PAIRS[1][0],QF_PAIRS[1][1]];
+  const rOtt=[QF_PAIRS[2][0],QF_PAIRS[2][1],QF_PAIRS[3][0],QF_PAIRS[3][1]];
+  const TOP=cy,COLW=84,CELLH=13,GAPX=7,SX=36,MGAP=4;
+  const totH=8*(CELLH*2+2)+7*MGAP;
+  function yMatch(n){const s=totH/n;const a=[];for(let i=0;i<n;i++)a.push(TOP+i*s+s/2);return a;}
+  function cellAt(x,y,t,win){ctx.save();rr(x,y,COLW,CELLH,3);const g=ctx.createLinearGradient(x,y,x,y+CELLH);if(win){g.addColorStop(0,'rgba(34,197,94,.25)');g.addColorStop(1,'rgba(34,197,94,.1)');}else{g.addColorStop(0,'rgba(30,42,60,.92)');g.addColorStop(1,'rgba(17,24,39,.92)');}ctx.fillStyle=g;ctx.fill();ctx.strokeStyle=win?'rgba(34,197,94,.6)':'rgba(255,255,255,.08)';ctx.stroke();ctx.restore();const f=fit(t,COLW-10,`bold 9px ${FC}`);ctx.save();ctx.font=`bold 9px ${FC}`;ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillStyle=t&&t!=='TBD'?'#e8edf5':'rgba(122,139,160,.5)';ctx.fillText((f.fl?f.fl+' ':'')+f.txt,x+4,y+CELLH/2+1);ctx.restore();}
+  function matchAt(x,yc,a,b,w){cellAt(x,yc-CELLH-1,a,w&&w===a);cellAt(x,yc+1,b,w&&w===b);}
+  const s8=yMatch(8),s4=yMatch(4),s2=yMatch(2),s1=yMatch(1);
+  function ottM(oi){const[a,b]=R16_PAIRS[oi];return{a:S_.r32[a],b:S_.r32[b],w:S_.r16[oi]};}
+  function qfM(qi){const[a,b]=QF_PAIRS[qi];return{a:S_.r16[a],b:S_.r16[b],w:S_.qf[qi]};}
+  function sfM(si){const SFPx=[[0,1],[2,3]];const[a,b]=SFPx[si];return{a:S_.qf[a],b:S_.qf[b],w:S_.sf[si]};}
+  // sinistra
+  lLeaves.forEach((mi,p)=>matchAt(SX,s8[p],r32M[mi].a,r32M[mi].b,S_.r32[mi]));
+  const xO=SX+COLW+GAPX;lOtt.forEach((oi,p)=>{const m=ottM(oi);matchAt(xO,s4[p],m.a,m.b,m.w);});
+  const xQ=xO+COLW+GAPX;[0,1].forEach((qi,p)=>{const m=qfM(qi);matchAt(xQ,s2[p],m.a,m.b,m.w);});
+  const xS=xQ+COLW+GAPX;{const m=sfM(0);matchAt(xS,s1[0],m.a,m.b,m.w);}
+  // destra
+  const xRm=W-SX-COLW;
+  rLeaves.forEach((mi,p)=>matchAt(xRm,s8[p],r32M[mi].a,r32M[mi].b,S_.r32[mi]));
+  const xOr=xRm-(COLW+GAPX);rOtt.forEach((oi,p)=>{const m=ottM(oi);matchAt(xOr,s4[p],m.a,m.b,m.w);});
+  const xQr=xOr-(COLW+GAPX);[2,3].forEach((qi,p)=>{const m=qfM(qi);matchAt(xQr,s2[p],m.a,m.b,m.w);});
+  const xSr=xQr-(COLW+GAPX);{const m=sfM(1);matchAt(xSr,s1[0],m.a,m.b,m.w);}
+  // connessioni
+  ctx.save();ctx.strokeStyle='rgba(255,255,255,.1)';ctx.lineWidth=1;
+  function lk(x1,ys,x2,yd,left){for(let i=0;i<yd.length;i++){const ya=ys[i*2],yb=ys[i*2+1],ym=yd[i];const xa=left?x1+COLW:x1,xb=left?x2:x2+COLW,xm=(xa+xb)/2;ctx.beginPath();ctx.moveTo(xa,ya);ctx.lineTo(xm,ya);ctx.lineTo(xm,yb);ctx.lineTo(xa,yb);ctx.moveTo(xm,ym);ctx.lineTo(xb,ym);ctx.stroke();}}
+  lk(SX,s8,xO,s4,true);lk(xO,s4,xQ,s2,true);lk(xQ,s2,xS,s1,true);
+  lk(xRm,s8,xOr,s4,false);lk(xOr,s4,xQr,s2,false);lk(xQr,s2,xSr,s1,false);
+  ctx.restore();
+  // labels
+  ctx.save();ctx.font=`bold 8px ${FC}`;ctx.fillStyle='rgba(122,139,160,.6)';ctx.textAlign='center';
+  ctx.fillText('SEDICES.',SX+COLW/2,TOP-5);ctx.fillText('OTTAVI',xO+COLW/2,TOP-5);ctx.fillText('QUARTI',xQ+COLW/2,TOP-5);ctx.fillText('SEMI',xS+COLW/2,TOP-5);ctx.restore();
+  cy=TOP+totH+18;
+  // FINALE
+  ctx.save();ctx.font=`bold 13px ${FC}`;ctx.fillStyle='rgba(245,197,24,.85)';ctx.textAlign='center';ctx.fillText('FINALE',W/2,cy);ctx.restore();cy+=10;
+  const fW=130,fGap=36;
+  cellAt(W/2-fW-fGap/2,cy,S_.sf[0],S_.final&&S_.final===S_.sf[0]);
+  cellAt(W/2+fGap/2,cy,S_.sf[1],S_.final&&S_.final===S_.sf[1]);
+  ctx.save();ctx.font=`bold 12px ${FC}`;ctx.fillStyle='#7a8ba0';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('VS',W/2,cy+CELLH/2);ctx.restore();
+  cy+=CELLH+14;
+  // CAMPIONE
+  ctx.save();rr(W/2-80,cy,160,40,8);const cg=ctx.createLinearGradient(W/2-80,cy,W/2+80,cy);cg.addColorStop(0,'#f5c518');cg.addColorStop(1,'#d97706');ctx.fillStyle=cg;ctx.fill();ctx.restore();
+  ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=`bold 9px ${FC}`;ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillText('🏆 CAMPIONE',W/2,cy+12);
+  const cf=fit(S_.final,150,`bold 17px ${FC}`);ctx.font=`bold 17px ${FC}`;ctx.fillStyle='#000';ctx.fillText((cf.fl?cf.fl+' ':'')+cf.txt,W/2,cy+27);ctx.restore();
+  cy+=52;
+  // MARCATORI
+  const cc=S_.capocannoniere,am=S_.assistman;
+  if(cc?.nome||am?.nome){
+    ctx.save();ctx.font=`bold 13px ${FC}`;ctx.fillStyle='rgba(99,102,241,.85)';ctx.textAlign='center';ctx.fillText('MARCATORI',W/2,cy);ctx.restore();cy+=18;
+    ctx.save();ctx.font=`13px ${FB}`;ctx.textAlign='center';ctx.fillStyle='#e8edf5';
+    if(cc?.nome){ctx.fillText('⚽ '+cc.nome+(cc.squadra?' ('+cc.squadra+')':''),W/2,cy);cy+=18;}
+    if(am?.nome){ctx.fillText('🎯 '+am.nome+(am.squadra?' ('+am.squadra+')':''),W/2,cy);cy+=10;}
+    ctx.restore();
+  }
+  // ritaglia altezza
+  const RH=cy+20;
+  if(RH<H){const tmp=document.createElement('canvas');tmp.width=W;tmp.height=RH;tmp.getContext('2d').drawImage(canvas,0,0);canvas.height=RH;ctx.drawImage(tmp,0,0);}
+}
+
+// Download card: Safari apre in nuova tab (tieni premuto → salva)
+// Chrome/Firefox: scarica direttamente
+function downloadCard(){
+  const canvas=document.getElementById('share-canvas');
+  const nome=`mondofello_${(S.nome||'pronostico').toLowerCase().replace(/\s+/g,'_')}.png`;
+  const isSafari=/^((?!chrome|android).)*safari/i.test(navigator.userAgent)||/iPad|iPhone|iPod/.test(navigator.userAgent);
+
+  if(isSafari){
+    // Su Safari: apriamo l'immagine in una nuova tab
+    // L'utente poi fa tasto lungo → "Aggiungi a foto" o "Salva immagine"
+    const dataUrl=canvas.toDataURL('image/png');
+    const w=window.open('','_blank');
+    if(w){
+      w.document.write(`<!DOCTYPE html><html><head><title>MondoFello 2026</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <style>body{margin:0;background:#0a0f1e;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:16px;}
+        img{max-width:100%;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.5);}
+        p{color:#f5c518;font-family:Arial;font-size:14px;text-align:center;padding:0 20px;}</style></head>
+        <body><p>📲 Tieni premuto sull'immagine per salvarla</p>
+        <img src="${dataUrl}" alt="MondoFello 2026"></body></html>`);
+      w.document.close();
+    } else {
+      // Popup bloccato — fallback: link diretto
+      const a=document.createElement('a');a.href=dataUrl;a.download=nome;
+      document.body.appendChild(a);a.click();document.body.removeChild(a);
+    }
+  } else {
+    // Chrome / Firefox / altri: download diretto via Blob
+    canvas.toBlob(blob=>{
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.download=nome;a.href=url;
+      document.body.appendChild(a);a.click();
+      setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},200);
+    },'image/png');
+  }
+}
+
+// ── INIT ──
+renderGironi('gaf',['A','B','C','D','E','F']);
+renderGironi('ggl',['G','H','I','J','K','L']);
+initMarcatoriDropdowns();
+prog();
+
+// Carica la lista dei nomi già usati (per impedire i duplicati)
+(async function loadUsedNames(){
+  try{
+    const res=await fetch(SHEET_URL+'?t='+Date.now());
+    const data=await res.json();
+    if(data.status==='ok'&&data.players){
+      data.players.forEach(row=>{
+        try{const o=JSON.parse(row.json);if(o.nome)usedNames.add(o.nome.trim().toLowerCase());}catch(e){}
+      });
+    }
+  }catch(e){/* se fallisce, il controllo finale all'invio resta comunque attivo */}
+})();
+
+// Controllo deadline all'avvio: se chiusa, mostra banner e blocca invio
+(function checkDeadline(){
+  if(new Date() >= DEADLINE){
+    const sb=document.getElementById('send-btn');
+    if(sb){sb.disabled=true;sb.textContent='⛔ Pronostici chiusi';}
+    const st=document.getElementById('send-status');
+    if(st){st.textContent='⛔ I pronostici sono chiusi (termine: '+DEADLINE.toLocaleString('it-IT',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+'). Puoi guardare ma non inviare.';st.style.color='var(--accent2)';}
+    // Banner in cima
+    const banner=document.createElement('div');
+    banner.style.cssText='background:linear-gradient(135deg,rgba(232,69,69,.18),rgba(232,69,69,.06));border-bottom:2px solid var(--accent2);color:#fff;text-align:center;padding:10px 16px;font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:14px;letter-spacing:.5px;';
+    banner.textContent='⛔ PRONOSTICI CHIUSI — il torneo è iniziato';
+    document.body.insertBefore(banner,document.body.firstChild);
+  }
+})();
+</script>
+</body>
+</html>
